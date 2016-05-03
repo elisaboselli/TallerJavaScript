@@ -1,0 +1,83 @@
+-------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------Historia de Usuario------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+*Como usuario quiero entrar al juego por medio de un navegador.
+*Como usuario quiero que me muestren las reglas del truco.
+*Como usuario quiero poder iniciar una partida.
+*Como usuario quiero definir de antemano a cuantos puntos es la partida.
+*Como usuario quiero poder decidir si jugar una partida individual o multijugador.
+*Como usuario quiero ver mis cartas.
+*Como usuario quiero poder "ir al mazo".
+*Como usuario quiero jugar una carta de mi mano.
+*Como usuario quiero cantar truco/retruco/vale 4 segun corresponda.
+*Como usuario quiero cantar envido/real envido/falta envido segun corresponda en la primer mano.
+*Como usuario quiero aceptar/negar/aumentar un truco/retruco/vale 4/envido/real envido/falta envido.
+*Como usuario quiero saber quien ganó un envido/truco.
+*Como usuario quiero saber con cuanto se gano el envido (puntos).
+*Como usuario quiero saber cuantos puntos gano cada usuario en cada mano.
+*Como usuario quiero saber la puntuacion actual.
+*Como usuario quiero saber quien gano la partida.
+*Como usuario quiero que no se pueda cantar envido si ya se quiso el truco.
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------Puesta en Común-------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+Roles: Guest, Player, Admin.
+*Como Invitado quiero registrarme en el sistema para jugar.
+*Como Invitado quiero jugar una partida rapida (sin registrarme).
+*Como Jugador quiero iniciar una partida.
+*Como Jugador que comenzo una partida quiero repartir las cartas.
+*Como Jugador que tiene el turno quiero cantar Envido.
+*Como Jugador en el comienzo de una ronda quiero tener 3 cartas al azar del mazo.
+*Como Jugador en la primer mano de una ronda quiero poner cantar envido.
+*Como Jugador que tiene el turno quiero poder jugar una carta.
+*
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+Mail del ayudante para consulta : jlgasparrini@gmail.com
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+
+test/Card.js
+	var expect = require("chai").expext;
+	var cardModel = require ("../models/card");
+-------------------------------------------------------------------------escribir en consola "mocha" , deberia tirar error que no existe model card
+	var Card = cardModel.card;
+-------------------------------------------------------------------------escribir en consola "mocha" , no deberia tirar error
+	describe("Card", function()){
+		it("should have a suit", function(){
+			var c = new Card(1,"oro");
+			expect(c).to.be.property("suit");
+		})
+-------------------------------------------------------------------------escribir en consola "mocha" , deberia tirar error
+		describe ("#show",function(){
+			it("should show the card", function(){
+				var c = new Card(4,"copa");
+				expect(c.show()).to.be.equal("4 de Copa")
+			})
+-------------------------------------------------------------------------escribir en consola "mocha" , deberia tirar error
+		})
+	});
+
+-------------------------------------------------------------------------primer llamado a mocha
+models/card.js
+	--------------constructor--------------
+	function Card(number,suit){
+		this.suit=suit;
+		this.number=number;
+		this.weigth=weigth[this.suit][this.number];
+	}
+-------------------------------------------------------------------------segundo llamado
+	module.export.card=Card;
+-------------------------------------------------------------------------tercer llamado
+	-------------Propiedad Mostrar-------------
+	Card.prototype.show = function(){
+		return (this.number+" de "+this.suit);
+	}
+-------------------------------------------------------------------------cuarto llamado
+	
