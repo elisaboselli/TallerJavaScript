@@ -32,7 +32,7 @@ var weight = {
 function Card(number, suit){
   this.number = number;
   this.suit = suit;
-  this.weight = weight[suit][number];
+  this.weight = weight[suit][number - 1];
 };
 
 /*

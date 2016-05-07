@@ -1,16 +1,24 @@
 var expect = require("chai").expect;
 var roundModel = require("../models/round.js");
-
+var gameModel = require("../models/game.js");
+var playerModel = require("../models/player.js");
 var Round = roundModel.round;
+var Game = gameModel.game;
+var Player = playerModel.player;
 
 describe('Round',function(){
+	var g = new Game('Pedro','Juan');
+	var r = new Round(g);
 	it('player1 should have 3 cards', function(){
-		var r = new Round();
-		expect(r.cardsplayer1).to.have.lengthOf(3);
+
+		expect(g.player1.cards).to.have.lengthOf(3);
 	});
 	
 	it('player2 should have 3 cards', function(){
-		var r = new Round();
-		expect(r.cardsplayer2).to.have.lengthOf(3);
+		expect(g.player2.cards).to.have.lengthOf(3);
 	});
+	
+	/*it('player should have this points', function(){
+		expect().to.be.equal.();
+	});*/
 });
