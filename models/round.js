@@ -112,11 +112,11 @@ function jugarEnvido(){
 }
 
 function cantoEnvido(){
-	return true;
+	return (confirm("¿Quieres cantar Envido?"));
 }
 
 function aceptoEnvido(){
-	return true;
+	return (confirm("¿Quieres aceptar Envido?"));
 }
 
 module.exports.round = Round;
