@@ -5,10 +5,15 @@ var Game = gameModel.game;
 
 function Round(game){
 	var d = new Deck().mix();
+	this.m = 0;
+	this.env = 0;
+	this.tru = 1;
 	game.player1.cards = [d[0],d[2],d[4]];
 	game.player2.cards = [d[1],d[3],d[5]];
-	game.player1.points = getPoints(game.player1.cards);
-	game.player2.points = getPoints(game.player2.cards);
+	game.player1.pointsenv = getPoints(game.player1.cards);
+	game.player2.pointsenv = getPoints(game.player2.cards);
+	game.player1.mano = !(game.player1.mano);
+	game.player2.mano = !(game.player2.mano);
 }
 
 function getPoints(array){
@@ -48,10 +53,10 @@ function points(a,b){
 	var p = 0;
 	if (a>10 || b>10 ){
 		if(a>10 && b<10){
-			p = array[2].number +20;
+			p = b +20;
 		}
 		if(b>10 && a<10){
-			p = array[1].number +20;
+			p = a+20;
 		}
 		if(a>10 && b>10){
 			p = 20;
@@ -61,6 +66,57 @@ function points(a,b){
 		p = a + b +20;
 	}
 	return p;
+}
+
+function confrontPoints(){
+	if(game.player1.pointsenv>game.player2.pointsenv){
+		return game.player1;
+	}
+	if(game.player1.pointsenv<game.player2.pointsenv){
+		return game.player2;
+	}
+	if(game.player1.pointsenv===game.player2.pointsenv){
+		if(game.player1.mano){
+			return game.player1;
+		}
+		return game.player2;
+	}
+}
+
+function poderCantarEnvido(){
+	if((this.m===0)&&(this.tru===1)){
+		return true;
+	}
+	return false;
+}
+
+function jugarEnvido(){
+	if(game.player1.cantoEnvido()){
+		this.env = this.env + 1;
+		if(game.player2.aceptoEnvido()){
+			this.env = this.env + 1;
+			confrontPoints().pointsTot = confrontPoints().pointsTot+this.env;
+		}
+		game.player1.pointsenv=this.env;
+		this.env = 0;
+	}
+	if(game.player2.cantoEnvido()){
+		this.env = this.env + 1;
+		if(game.player1.aceptoEnvido()){
+			this.env = this.env + 1;
+			confrontPoints().pointsTot = confrontPoints().pointsTot+this.env;
+		}
+		game.player2.pointsenv=this.env;
+		this.env = 0;
+	}
+}
+
+function cantoEnvido(){
+	return true;
+}
+
+function aceptoEnvido(){
+	return true;
 }
 
 module.exports.round = Round;

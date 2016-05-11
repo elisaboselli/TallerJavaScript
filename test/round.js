@@ -18,6 +18,10 @@ describe('Round',function(){
 		expect(g.player2.cards).to.have.lengthOf(3);
 	});
 	
+	it('the players should have differents hand',function(){
+		expect(g.player1.mano).to.be.not.equal(g.player2.mano);
+	});
+	
 	/*it('player should have this points', function(){
 		expect().to.be.equal.();
 	});*/
