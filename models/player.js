@@ -12,7 +12,7 @@ Player.prototype.jugarCarta = function(x){
 		this.cards[x] = null;
 		return aux;
 	}
-	// tirar una excepcion por argumento invalido.
+	//throw "No se puede jugar esa carta";
 };
 
 module.exports.player = Player;

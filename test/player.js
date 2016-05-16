@@ -17,10 +17,9 @@ describe('Player',function(){
 		expect(c.show()).to.be.equal("1: oro");
 	});
 
-	/*it('should do not play a card', function(){
+	it('should do not play a card', function(){
 		var p = new Player('Pedro');
 		p.cards[0]=null;
-		var c = p.jugarCarta(0);
-		expect(c).to.be.equal(null);
-	});*/
+		expect(p.jugarCarta(0)).to.be.an('undefined');
+	});
 });
