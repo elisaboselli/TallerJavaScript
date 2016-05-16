@@ -16,7 +16,7 @@ describe('Player',function(){
 		var c = p.jugarCarta(0);
 		expect(c.show()).to.be.equal("1: oro");
 	});
-
+	
 	it('should do not play a card', function(){
 		var p = new Player('Pedro');
 		p.cards[0]=null;
