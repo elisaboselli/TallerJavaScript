@@ -19,16 +19,34 @@ describe('Round',function(){
 		expect(g.player2.cards).to.have.lengthOf(3);
 	});
 	
-	it('the players should have differents hand',function(){
+	/*it('the players should have differents hand',function(){
 		expect(g.player1.mano).to.be.not.equal(g.player2.mano);
-	});
-	
-	//PREGUNTAR !!
-	/*it('this cards should have this points', function(){
-		var c1 = Card(7,'basto');
-		var c2 = Card(12,'oro');
-		var c3 = Card(3,'basto');
-		var mano = [c1,c2,c3];
-		expect(getPoints(mano)).to.be.equal(30);
 	});*/
+	
 });
+
+//COPIADO DEL GIT DEL PROFE: Hay que controlarlo despues porque me parece que hay algunas funciones que no existen.
+/*describe('Round', function(){
+ var game;
+
+  beforeEach(function(){
+    game = new Game();
+    game.newRound();
+  });
+
+  describe("#deal", function(){
+    it("should populate player1 cards", function(){
+      var round = new Round(game);
+      round.deal();
+
+      expect(game.player1.cards.length).to.be.equal(3);
+    });
+
+    it("should populate player2 cards", function(){
+      var round = new Round(game);
+      round.deal();
+
+      expect(game.player2.cards.length).to.be.equal(3);
+    });
+  });
+});*/

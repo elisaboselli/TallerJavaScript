@@ -23,3 +23,14 @@ describe('Player',function(){
 		expect(p.jugarCarta(0)).to.be.an('undefined');
 	});
 });
+
+describe ('puntos del envido', function(){
+	it('7 de basto , 12 de oro, 3 de basto  deberia devolver 30',function(){
+		var c1 = new Card(7,'basto');
+		var c2 = new Card(12,'oro');
+		var c3 = new Card(3,'basto');
+		var p=new Player ('Juan');
+		p.cards=[c1,c2,c3] ;
+		expect(p.getPoints()).to.be.equal(30);
+	});
+});
