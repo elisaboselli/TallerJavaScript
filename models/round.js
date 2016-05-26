@@ -38,7 +38,7 @@ function Round(game,turn){
 	this.scoretruco=1;
 	this.playedcards = [];
 	this.estadoant= null;
-	this.manosganadas= 0;
+	this.manosganadas= [];
 }
 
 //Devuelve el jugador que gana el envido (compara puntos)
@@ -85,7 +85,7 @@ Round.prototype.switchPlayer = function (player){
 //Inserta una carta en la lista de cartas jugadas. Con manosganadas controlamos como va el juego.
 Round.prototype.insertCard = function (card){
 	//A la lista en la ultima posicion no ocupada guarda la carta jugada (independientemente de que jugador sea)
-	this.playedcards[this.playedcards.length]= card;
+	this.playedcards.push(card);
 	if ((this.playedcards.length === 2)||(this.playedcards.length  === 4) || (this.playedcards.length === 6)){
 		//Si la cantidad de cartas jugadas es par, hay que confrontarlas para saber quien gana la mano
 		var c1=(this.playedcards[this.playedcards.length - 1]);
@@ -95,27 +95,27 @@ Round.prototype.insertCard = function (card){
 			//Si c1 le gana a c2
 			if (this.currentTurn ==this.game.player1){
 				//Y es el turno de player1 (player1 jugo c1) le sumamos 1 a manos ganadas
-				this.manosganadas+=1;
+				this.manosganadas.push (1);
 			}
 			else{
 				//Sino le restamos 1
-				this.manosganadas+= -1;
+				this.manosganadas.push (-1);
 			}
 		}
 		if (a===-1){
 			//Si c2 le gana a c1
 			if (this.currentTurn ==this.game.player1){
 				//Y es el turno de player1 (player1 jugo c1) le restamos 1 a manos ganadas
-				this.manosganadas +=-1;
+				this.manosganadas.push (-1);
 			}
 			else{
 				//Sino le sumamos 1
-				this.manosganadas+=1;
+				this.manosganadas.push (1);
 			}
 		}
 		if (a===0){
 			//Si las cartas empatan, no se le suma nada
-			this.manosganadas+=0;
+			this.manosganadas.push (0);
 		}
 	}	
 }
@@ -124,18 +124,28 @@ Round.prototype.insertCard = function (card){
 Round.prototype.winner = function(){
 	if (((this.playedcards.length)  === 4) || (this.playedcards.length === 6)){
 		//Si estamos en posicion de saber si hay un ganador (es decir si ya se jugaron al menos dos manos)
-		if (this.manosganadas>0){
+		var sum=0;
+		for (var i = 0; i < this.manosganadas.length; i++){
+			sum+=this.manosganadas[i];		
+		}
+		if (sum>0){
 			//Si se sumo 2 veces 1 significa que player1 gano 2 manos por lo tanto es ganador
 			return this.game.player1;
 		}
-		if (this.manosganadas<0){
+		if (sum<0){
 			//Si se resto 2 veces 1 significa que player2 gano 2 manos por lo tanto es ganador
 			return this.game.player2;
 		}
-		if (this.manosganadas===0 && (this.playedcards.length === 6) ){
+		if (sum ===0 && (this.playedcards.length === 6) ){
 			//Si se jugaron las 6 cartas y se empataron todas, o bien ganaron una vez cada uno y empataron en el restante, se devuelve el jugador que es mano.
 			//¿Que pasa si 1º gana player1, 2º gana player2, 3º empatan? ¿Deberia ganar player1? ¿Funciona?
-			return this.game.currentHand;
+			if (this.manosganadas[0]=== -1){
+					var noHand = this.switchPlayer(this.game.currentHand);
+					return noHand			
+			}
+			else {
+					return this.game.currentHand;		
+			}
 		}
 	}
 	//Si todavia no se puede calcular un ganador se devuelve null
@@ -163,7 +173,7 @@ Round.prototype.calculateScore = function(action){
     				this.game.score[1] += 1; 
    		 		}
     			else{
-    				this.game.score[0] += 1;
+    				this.game.score[0] +=1;
     			}
 
    		 	}
@@ -202,10 +212,10 @@ Round.prototype.play = function(action, value) {
   		if (this.winner ()!==null){
   			//Y si hay un ganador le asigna los puntos a los correspondientes.
   			if (this.winner()===this.game.player1){
-  				this.game.score[0]=this.scoretruco;
+  				this.game.score[0]+=this.scoretruco;
   			}
   			else{
-  				this.game.score[1]=this.scoretruco;
+  				this.game.score[1]+=this.scoretruco;
   			}
   			//Por ultimo finalizamos.
   			this.fsm.finalizar();
