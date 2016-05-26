@@ -125,7 +125,7 @@ describe('Game play', function(){
     game.play(game.player2, 'play card', game.player2.cards[1]);
     game.play(game.player1, 'play card', game.player1.cards[0]);
     game.play(game.player2, 'play card', game.player2.cards[0]);
-    game.play(game.player2, 'truco');ndo las cartas, 1er mano gana player2,player2 canta envido,player1 quiere, 2da gana player1, 
+    game.play(game.player2, 'truco');
     game.play(game.player1, 'quiero');
     game.play(game.player2, 'play card', game.player2.cards[2]);
     game.play(game.player1, 'play card', game.player1.cards[2]);
@@ -134,7 +134,7 @@ describe('Game play', function(){
 	  it('jugando las cartas, 1er mano gana player2,player2 canta envido,player1 no quiere, 2da gana player1, player 2 canta truco, player 1 acepta, 3er mano empate; deberia darles los puntos del truco a mas un punto del envido a player2', function(){
     game.play(game.player1, 'play card', game.player1.cards[0]);
 		game.play(game.player2, 'envido');
-  	game.play(game.player1, 'no-quiero');
+		game.play(game.player1, 'no-quiero');
     game.play(game.player2, 'play card', game.player2.cards[0]);
     game.play(game.player2, 'play card', game.player2.cards[1]);
     game.play(game.player1, 'play card', game.player1.cards[1]);
@@ -147,8 +147,8 @@ describe('Game play', function(){
 		  it('jugando las cartas, 1er mano gana player2,player2 canta envido,player1 quiere, 2da gana player1, player 2 canta truco, player 1 acepta, 3er mano empate; deberia darles los puntos del truco a player 2 y los puntos del envido a player1', function(){
     game.play(game.player1, 'play card', game.player1.cards[0]);
 		game.play(game.player2, 'envido');
-  	game.play(game.player1, 'quiero');
-    game.play(game.player2, 'play card', game.player2.cards[0]);
+		game.play(game.player1, 'quiero');
+		game.play(game.player2, 'play card', game.player2.cards[0]);
     game.play(game.player2, 'play card', game.player2.cards[1]);
     game.play(game.player1, 'play card', game.player1.cards[1]);
     game.play(game.player1, 'truco');
