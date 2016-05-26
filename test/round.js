@@ -9,8 +9,9 @@ var Player = playerModel.player;
 var Card = cardModel.card;
 
 describe('Round',function(){
-	var g = new Game('Pedro','Juan');
-	var r = new Round(g);
+	var g = new Game();
+	g.newRound();
+
 	it('player1 should have 3 cards', function(){
 		expect(g.player1.cards).to.have.lengthOf(3);
 	});
@@ -18,6 +19,7 @@ describe('Round',function(){
 	it('player2 should have 3 cards', function(){
 		expect(g.player2.cards).to.have.lengthOf(3);
 	});
+
 });
 
 //COPIADO DEL GIT DEL PROFE: Hay que controlarlo despues porque me parece que hay algunas funciones que no existen.

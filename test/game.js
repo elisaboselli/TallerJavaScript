@@ -23,9 +23,19 @@ describe('Game',function(){
 		var g = new Game(p1,p2);
 		expect(g).to.have.property('player2');
 	});
+
+	it('should change turn', function(){
+		var game = new Game();
+		game.newRound();
+		expect(game.currentHand).to.be.equal(game.player1);
+		game.currentHand = game.switchPlayer(game.currentHand);
+		expect(game.currentHand).to.be.equal(game.player2);
+		game.currentHand = game.switchPlayer(game.currentHand);
+		expect(game.currentHand).to.be.equal(game.player1);
+	});
 });
 
-describe('Game play', function(){
+describe('Game play (1)', function(){
   var game;
 
   beforeEach(function(){
@@ -66,28 +76,36 @@ describe('Game play', function(){
   });
 
   it('jugando con las cartas', function(){
-    game.play(game.player1, 'play card', game.player1.cards[0]);
-    game.play(game.player2, 'play card', game.player2.cards[0]);
-    game.play(game.player1, 'play card', game.player1.cards[1]);
-    game.play(game.player2, 'play card', game.player2.cards[1]);
+    game.play(game.player1, 'play card', game.player1.jugarCarta(0));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(0));
+    game.play(game.player1, 'play card', game.player1.jugarCarta(1));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(1));
+   expect(game.score).to.deep.equal([1, 0]);
+  });
+
+  it('jugando con las cartas (con funcion jugarCarta)', function(){
+    game.play(game.player1, 'play card', game.player1.jugarCarta(0));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(0));
+    game.play(game.player1, 'play card', game.player1.jugarCarta(1));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(1));
    expect(game.score).to.deep.equal([1, 0]);
   });
 
   it('jugando con las cartas y truco', function(){
-    game.play(game.player1, 'play card', game.player1.cards[0]);
-    game.play(game.player2, 'play card', game.player2.cards[2]);
-    game.play(game.player2, 'play card', game.player2.cards[1]);
-    game.play(game.player1, 'play card', game.player1.cards[1]);
+    game.play(game.player1, 'play card', game.player1.jugarCarta(0));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(2));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(1));
+    game.play(game.player1, 'play card', game.player1.jugarCarta(1));
     game.play(game.player1, 'truco');
     game.play(game.player2, 'quiero');
-    game.play(game.player1, 'play card', game.player1.cards[2]);
-    game.play(game.player2, 'play card', game.player2.cards[0]);
+    game.play(game.player1, 'play card', game.player1.jugarCarta(2));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(0));
    expect(game.score).to.deep.equal([2, 0]);
   });
 
 });
 
-describe('Game play', function(){
+describe('Game play (2)', function(){
   var game;
 
   beforeEach(function(){
@@ -110,51 +128,51 @@ describe('Game play', function(){
   });
 
   it('jugando las cartas, 1er mano gana player2, 2da gana player1, player 2 canta truco, player 1 acepta, 3er mano empate; deberia darles los puntos del truco a player 2', function(){
-    game.play(game.player1, 'play card', game.player1.cards[0]);
-    game.play(game.player2, 'play card', game.player2.cards[0]);
-    game.play(game.player2, 'play card', game.player2.cards[1]);
-    game.play(game.player1, 'play card', game.player1.cards[1]);
+    game.play(game.player1, 'play card', game.player1.jugarCarta(0));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(0));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(1));
+    game.play(game.player1, 'play card', game.player1.jugarCarta(1));
     game.play(game.player1, 'truco');
     game.play(game.player2, 'quiero');
-    game.play(game.player1, 'play card', game.player1.cards[2]);
-    game.play(game.player2, 'play card', game.player2.cards[2]);
+    game.play(game.player1, 'play card', game.player1.jugarCarta(2));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(2));
     expect(game.score).to.deep.equal([0, 2]);
   });
 	it('jugando las cartas, 1er mano gana player1, 2da gana player2, player 2 canta truco, player 1 acepta, 3er mano empate; deberia darles los puntos del truco a player 1', function(){
-    game.play(game.player1, 'play card', game.player1.cards[1]);
-    game.play(game.player2, 'play card', game.player2.cards[1]);
-    game.play(game.player1, 'play card', game.player1.cards[0]);
-    game.play(game.player2, 'play card', game.player2.cards[0]);
+    game.play(game.player1, 'play card', game.player1.jugarCarta(1));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(1));
+    game.play(game.player1, 'play card', game.player1.jugarCarta(0));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(0));
     game.play(game.player2, 'truco');
     game.play(game.player1, 'quiero');
-    game.play(game.player2, 'play card', game.player2.cards[2]);
-    game.play(game.player1, 'play card', game.player1.cards[2]);
+    game.play(game.player2, 'play card', game.player2.jugarCarta(2));
+    game.play(game.player1, 'play card', game.player1.jugarCarta(2));
     expect(game.score).to.deep.equal([2, 0]);
   });
 	  it('jugando las cartas, 1er mano gana player2,player2 canta envido,player1 no quiere, 2da gana player1, player 2 canta truco, player 1 acepta, 3er mano empate; deberia darles los puntos del truco a mas un punto del envido a player2', function(){
-    game.play(game.player1, 'play card', game.player1.cards[0]);
-		game.play(game.player2, 'envido');
-		game.play(game.player1, 'no-quiero');
-    game.play(game.player2, 'play card', game.player2.cards[0]);
-    game.play(game.player2, 'play card', game.player2.cards[1]);
-    game.play(game.player1, 'play card', game.player1.cards[1]);
+    game.play(game.player1, 'play card', game.player1.jugarCarta(0));
+	game.play(game.player2, 'envido');
+	game.play(game.player1, 'no-quiero');
+    game.play(game.player2, 'play card', game.player2.jugarCarta(0));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(1));
+    game.play(game.player1, 'play card', game.player1.jugarCarta(1));
     game.play(game.player1, 'truco');
     game.play(game.player2, 'quiero');
-    game.play(game.player1, 'play card', game.player1.cards[2]);
-    game.play(game.player2, 'play card', game.player2.cards[2]);
+    game.play(game.player1, 'play card', game.player1.jugarCarta(2));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(2));
     expect(game.score).to.deep.equal([0, 3]);
   });
 		  it('jugando las cartas, 1er mano gana player2,player2 canta envido,player1 quiere, 2da gana player1, player 2 canta truco, player 1 acepta, 3er mano empate; deberia darles los puntos del truco a player 2 y los puntos del envido a player1', function(){
-    game.play(game.player1, 'play card', game.player1.cards[0]);
-		game.play(game.player2, 'envido');
-		game.play(game.player1, 'quiero');
-		game.play(game.player2, 'play card', game.player2.cards[0]);
-    game.play(game.player2, 'play card', game.player2.cards[1]);
-    game.play(game.player1, 'play card', game.player1.cards[1]);
+    game.play(game.player1, 'play card', game.player1.jugarCarta(0));
+	game.play(game.player2, 'envido');
+	game.play(game.player1, 'quiero');
+	game.play(game.player2, 'play card', game.player2.jugarCarta(0));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(1));
+    game.play(game.player1, 'play card', game.player1.jugarCarta(1));
     game.play(game.player1, 'truco');
     game.play(game.player2, 'quiero');
-    game.play(game.player1, 'play card', game.player1.cards[2]);
-    game.play(game.player2, 'play card', game.player2.cards[2]);
+    game.play(game.player1, 'play card', game.player1.jugarCarta(2));
+    game.play(game.player2, 'play card', game.player2.jugarCarta(2));
     expect(game.score).to.deep.equal([2, 2]);
   });
 });

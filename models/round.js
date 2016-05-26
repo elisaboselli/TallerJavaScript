@@ -13,7 +13,8 @@ function newTrucoFSM(){
   events: [
     { name: 'play card', from: 'init',                           to: 'primer carta' },
     { name: 'envido',    from: ['init', 'primer carta'],         to: 'envido' },
-    { name: 'truco',     from: ['init', 'played card'],          to: 'truco'  },
+    { name: 'truco',     from: ['init', 'played card',
+    								   'primer carta'],          to: 'truco'  },
     { name: 'play card', from: ['quiero', 'no-quiero',
                                 'primer carta', 'played card'],  to: 'played card' },
     { name: 'quiero',    from: ['envido', 'truco'],              to: 'quiero'  },
@@ -37,7 +38,7 @@ function Round(game,turn){
 	this.status='running';
 	this.scoretruco=1;
 	this.playedcards = [];
-	this.estadoant= null;
+	this.estados= [];
 	this.manosganadas= [];
 }
 
@@ -85,38 +86,43 @@ Round.prototype.switchPlayer = function (player){
 //Inserta una carta en la lista de cartas jugadas. Con manosganadas controlamos como va el juego.
 Round.prototype.insertCard = function (card){
 	//A la lista en la ultima posicion no ocupada guarda la carta jugada (independientemente de que jugador sea)
-	this.playedcards.push(card);
-	if ((this.playedcards.length === 2)||(this.playedcards.length  === 4) || (this.playedcards.length === 6)){
-		//Si la cantidad de cartas jugadas es par, hay que confrontarlas para saber quien gana la mano
-		var c1=(this.playedcards[this.playedcards.length - 1]);
-		var c2=(this.playedcards[this.playedcards.length - 2]);
-		var a = (c1.confront(c2));
-		if (a===1){
-			//Si c1 le gana a c2
-			if (this.currentTurn ==this.game.player1){
-				//Y es el turno de player1 (player1 jugo c1) le sumamos 1 a manos ganadas
-				this.manosganadas.push (1);
+	if (card !== undefined){
+		this.playedcards.push(card);
+		if ((this.playedcards.length === 2)||(this.playedcards.length  === 4) || (this.playedcards.length === 6)){
+			//Si la cantidad de cartas jugadas es par, hay que confrontarlas para saber quien gana la mano
+			var c1=(this.playedcards[this.playedcards.length - 1]);
+			var c2=(this.playedcards[this.playedcards.length - 2]);
+			var a = (c1.confront(c2));
+			if (a===1){
+				//Si c1 le gana a c2
+				if (this.currentTurn ==this.game.player1){
+					//Y es el turno de player1 (player1 jugo c1) le sumamos 1 a manos ganadas
+					this.manosganadas.push (1);
+				}
+				else{
+					//Sino le restamos 1
+					this.manosganadas.push (-1);
+				}
 			}
-			else{
-				//Sino le restamos 1
-				this.manosganadas.push (-1);
+			if (a===-1){
+				//Si c2 le gana a c1
+				if (this.currentTurn ==this.game.player1){
+					//Y es el turno de player1 (player1 jugo c1) le restamos 1 a manos ganadas
+					this.manosganadas.push (-1);
+				}
+				else{
+					//Sino le sumamos 1
+					this.manosganadas.push (1);
+				}
+			}
+			if (a===0){
+				//Si las cartas empatan, no se le suma nada
+				this.manosganadas.push (0);
 			}
 		}
-		if (a===-1){
-			//Si c2 le gana a c1
-			if (this.currentTurn ==this.game.player1){
-				//Y es el turno de player1 (player1 jugo c1) le restamos 1 a manos ganadas
-				this.manosganadas.push (-1);
-			}
-			else{
-				//Sino le sumamos 1
-				this.manosganadas.push (1);
-			}
-		}
-		if (a===0){
-			//Si las cartas empatan, no se le suma nada
-			this.manosganadas.push (0);
-		}
+	}
+	else{
+		throw new Error("[ERROR] PLAYED CARD...");
 	}	
 }
 
@@ -138,7 +144,6 @@ Round.prototype.winner = function(){
 		}
 		if (sum ===0 && (this.playedcards.length === 6) ){
 			//Si se jugaron las 6 cartas y se empataron todas, o bien ganaron una vez cada uno y empataron en el restante, se devuelve el jugador que es mano.
-			//¿Que pasa si 1º gana player1, 2º gana player2, 3º empatan? ¿Deberia ganar player1? ¿Funciona?
 			if (this.manosganadas[0]=== -1){
 					var noHand = this.switchPlayer(this.game.currentHand);
 					return noHand			
@@ -156,7 +161,7 @@ Round.prototype.winner = function(){
 Round.prototype.calculateScore = function(action){
   	if(action == "quiero" || action == "no-quiero"){
   		//Si se llego a una decision
-  		if (this.estadoant == "envido"){
+  		if (this.estados[this.estados.length-1] == "envido"){
   			//Desde un envido
     		if (action == "quiero"){
     			//Y se quiso, le asignamos +2 puntos al ganador del envido.
@@ -178,7 +183,7 @@ Round.prototype.calculateScore = function(action){
 
    		 	}
    		}
-   		if (this.estadoant=="truco"){
+   		if (this.estados[this.estados.length-1]=="truco"){
    			//En cambio si se llego desde un truco
     		if (action=="no-quiero"){
     			//Y no se quiso, le asignamos los puntos del truco al contrario del que tiene el turno (ya que el que tiene el turno dijo "no quiero")
@@ -202,7 +207,7 @@ Round.prototype.calculateScore = function(action){
 //Juega
 Round.prototype.play = function(action, value) {
   //Cambiamos de estado
-  this.estadoant=this.fsm.current;
+  this.estados.push(this.fsm.current);
   this.fsm[action]();
   //Comprobamos puntajes
   this.calculateScore(action);

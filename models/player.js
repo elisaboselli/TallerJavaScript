@@ -35,14 +35,14 @@ Player.prototype.getPoints = function(){
 		max=p;
 	}
 	if(max===0){
-		if(max<this.cards[0] && this.cards[0]<10){
-			max = this.cards[0];
+		if(max<this.cards[0].number && this.cards[0].number<10){
+			max = this.cards[0].number;
 		}
-		if(max<this.cards[1] && this.cards[1]<10){
-			max = this.cards[1];
+		if(max<this.cards[1].number && this.cards[1].number<10){
+			max = this.cards[1].number;
 		}
-		if(max<this.cards[2] && this.cards[2]<10){
-			max = this.cards[2];
+		if(max<this.cards[2].number && this.cards[2].number<10){
+			max = this.cards[2].number;
 		}
 	}
 	return max;
