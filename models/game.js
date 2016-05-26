@@ -1,22 +1,17 @@
 var roundModel = require("./round.js");
 var playerModel = require("./player.js");
-var Model = roundModel.round;
+var Round = roundModel.round;
 var Player = playerModel.player;
 
 
-function Game(n1, n2){
-	//var p1 = new Player(this, n1);
-	//var p2 = new Player(this, n2);
-	this.player1 = new Player(this, n1);
-	this.player2 = new Player(this, n2);
+function Game(){
+	this.player1 = new Player(this, "Player1");
+	this.player2 = new Player(this, "Player2");
 	this.rounds = [];
-	this.currentHand = this.player1;
+	this.currentHand = this.player2;
 	this.currentRound = undefined;
 	this.score = [0,0];
-	//this.player2.mano = true;
 }
-
-//COPIADO DEL GIT DEL PROFE:
 
 //Check if it's valid move and play in the current round
 Game.prototype.play = function(player, action, value){
@@ -31,17 +26,22 @@ Game.prototype.play = function(player, action, value){
 
 //Create and return a new Round to this game
 Game.prototype.newRound = function(){
+	this.currentHand = this.switchPlayer(this.currentHand);
   var round = new Round(this, this.currentHand);
   this.currentRound = round;
-  this.currentHand = switchPlayer(this.currentHand);
   this.rounds.push(round);
-
   return this;
 }
 
 //returns the oposite player
-function switchPlayer(player) {
-  return "player1" === player ? "player2" : "player1";
+Game.prototype.switchPlayer = function (player) {
+  if (player === this.player1){
+  	player = this.player2;
+  }
+  else{
+  	player = this.player1;
+  }
+  return player;
 };
 
 

@@ -1,26 +1,23 @@
 function Player(game, name){
 	this.name=name;
-	this.game = game;
 	this.cards= [];
 	this.pointsenv=0;
-	//saque esto porque se modelaria con turn.
-	//this.mano= false;
 	this.pointsTot = 0;
 }
 
+//Jugamos la carta en la posicion x
 Player.prototype.jugarCarta = function(x){
-	if(this.cards[x]!= null){
+	if(this.cards[x]!= null && (0<=x<=2)){
 		var aux = this.cards[x];
 		this.cards[x] = null;
 		return aux;
 	}
-	//throw "No se puede jugar esa carta";
 };
 
+//Calculamos los puntos del envido de un jugador
 Player.prototype.getPoints = function(){
 	var max = 0;
 	var p = 0;
-	console.log(this.cards);
 	if(this.cards[0].suit === this.cards[1].suit){
 		p = points(this.cards[0].number,this.cards[1].number);
 	}
@@ -51,6 +48,7 @@ Player.prototype.getPoints = function(){
 	return max;
 }
 
+//Funcion auxiliar: Si las cartas son del mismo palo, calcula cuantos son los puntos.
 function points(a,b){
 	var p = 0;
 	if (a>10 || b>10 ){

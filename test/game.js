@@ -6,6 +6,9 @@ var Game = gameModel.game;
 var playerModel = require("../models/player.js");
 var Player = playerModel.player;
 
+var cardModel = require("../models/card.js");
+var Card = cardModel.card;
+
 describe('Game',function(){
 	it('should have player 1', function(){
 		var p1 = new Player('Pedro');
@@ -22,32 +25,64 @@ describe('Game',function(){
 	});
 });
 
-//COPIADO DEL GIT DEL PROFE: Hay que controlarlo despues porque me parece que hay algunas funciones que no existen.
-/*describe('Game#play', function(){
+describe('Game play', function(){
   var game;
 
   beforeEach(function(){
     game = new Game();
     game.newRound();
 
-    // Force to have the following cards and envidoPoints
-    game.player1.setCards([
-        new Card(1, 'copa'),
-        new Card(7, 'oro'),
-        new Card(2, 'oro')
-    ]);
+    c1=new Card(1, 'copa');
+    c2=new Card(7, 'oro');
+    c3=new Card(2, 'oro');
+    game.player1.cards=[c1,c2,c3];
+    game.player1.pointsenv=game.player1.getPoints();
 
-    game.player2.setCards([
-        new Card(6, 'copa'),
-        new Card(7, 'copa'),
-        new Card(2, 'basto')
-    ]);
+    c1=new Card(6, 'copa'),
+    c2=new Card(7, 'copa'),
+    c3=new Card(2, 'basto')
+    game.player2.cards=[c1,c2,c3];
+    game.player2.pointsenv=game.player2.getPoints();
+
+
   });
 
   it('plays [envido, quiero] should gives 2 points to winner', function(){
-    game.play('player1', 'envido');
-    game.play('player2', 'quiero');
-
+    game.play(game.player1, 'envido');
+    game.play(game.player2, 'quiero');
     expect(game.score).to.deep.equal([0, 2]);
   });
-});*/
+
+  it('plays [envido, no quiero] should gives 1 points to player1', function(){
+  	game.play(game.player1, 'envido');
+  	game.play(game.player2, 'no-quiero');
+  	expect(game.score).to.deep.equal([1, 0]);
+  });
+
+  it('plays [truco, no quiero] should gives 2 points to player1', function(){
+    game.play(game.player1, 'truco');
+    game.play(game.player2, 'no-quiero');
+   	expect(game.score).to.deep.equal([1, 0]);
+  });
+
+  it('jugando con las cartas', function(){
+    game.play(game.player1, 'play card', game.player1.cards[0]);
+    game.play(game.player2, 'play card', game.player2.cards[0]);
+    game.play(game.player1, 'play card', game.player1.cards[1]);
+    game.play(game.player2, 'play card', game.player2.cards[1]);
+   expect(game.score).to.deep.equal([1, 0]);
+  });
+
+  it('jugando con las cartas y truco', function(){
+    game.play(game.player1, 'play card', game.player1.cards[0]);
+    game.play(game.player2, 'play card', game.player2.cards[2]);
+    game.play(game.player2, 'play card', game.player2.cards[1]);
+    game.play(game.player1, 'play card', game.player1.cards[1]);
+    game.play(game.player1, 'truco');
+    game.play(game.player2, 'quiero');
+    game.play(game.player1, 'play card', game.player1.cards[2]);
+    game.play(game.player2, 'play card', game.player2.cards[0]);
+   expect(game.score).to.deep.equal([2, 0]);
+  });
+
+});

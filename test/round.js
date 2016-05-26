@@ -18,11 +18,6 @@ describe('Round',function(){
 	it('player2 should have 3 cards', function(){
 		expect(g.player2.cards).to.have.lengthOf(3);
 	});
-	
-	/*it('the players should have differents hand',function(){
-		expect(g.player1.mano).to.be.not.equal(g.player2.mano);
-	});*/
-	
 });
 
 //COPIADO DEL GIT DEL PROFE: Hay que controlarlo despues porque me parece que hay algunas funciones que no existen.

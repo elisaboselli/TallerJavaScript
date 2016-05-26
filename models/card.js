@@ -60,35 +60,4 @@ Card.prototype.confront = function(card){
     return -1;
 };
 
-//COPIADO DE GIT DEL PROFE: Esto deberia ser equivalente al get points nuestro. Decidimos (por ahora) dejar lo nuestro.
-/*
- //Returns the envido points of two cards 'this' and 'card'
-Card.prototype.envido = function(card) {
-  var cardValue = card.isBlackCard() ? 0 : card.number;
-  var thisValue = this.isBlackCard() ? 0 : this.number;
-
-  if(!this.isSameSuit(card))
-    return _.max([cardValue, thisValue]);
-
-  else if (card.isBlackCard() && this.isBlackCard())
-    return 20;
-
-  else
-    return cardValue + thisValue + 20;
-};
-
-
- //Returns true if card is number 11 or 12
-Card.prototype.isBlackCard = function(){
-  return this.number == 11 || this.number == 12;
-};
-
-
- //Returns true when this has the same suit than @card
-Card.prototype.isSameSuit = function(card){
-  return this.suit == card.suit;
-};
-*/
-
 module.exports.card = Card;
-
