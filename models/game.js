@@ -5,21 +5,29 @@ var Player = playerModel.player;
 
 
 function Game(){
+	//players of the game
 	this.player1 = new Player(this, "Player1");
 	this.player2 = new Player(this, "Player2");
+	//array of round played an the current
 	this.rounds = [];
+	//player hand
 	this.currentHand = this.player2;
+	//curren Round
 	this.currentRound = undefined;
+	//score of the game, this.score[0] is the score of the player 1,this.score[1] is the score of the player 1
 	this.score = [0,0];
 }
 
-//Check if it's valid move and play in the current round
+//Check if it's valid move and play and card played (if action = play card) in the current round
 Game.prototype.play = function(player, action, value){
   if(this.currentRound.currentTurn !== player)
     throw new Error("[ERROR] INVALID TURN...");
 
   if(this.currentRound.fsm.cannot(action))
     throw new Error("[ERROR] INVALID MOVE...");
+  if (action=="play card" && value == undefined)
+  	throw new Error("[ERROR] PLAYED CARD...");
+
 
   return this.currentRound.play(action, value);
 };

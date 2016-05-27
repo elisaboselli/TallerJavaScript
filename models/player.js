@@ -1,8 +1,10 @@
 function Player(game, name){
+	//name player
 	this.name=name;
+	//player cards
 	this.cards= [];
+	//envido points of player
 	this.pointsenv=0;
-	this.pointsTot = 0;
 }
 
 //Jugamos la carta en la posicion x

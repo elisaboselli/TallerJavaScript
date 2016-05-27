@@ -12,6 +12,8 @@
     "chai": "^3.2.0"
   },
   "dependencies": {
+    "express": "^4.13.4",
+    "jade": "^1.11.0",
     "javascript-state-machine": "^2.3.5",
     "lodash": "^4.6.1"
   }

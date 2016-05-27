@@ -28,17 +28,31 @@ function newTrucoFSM(){
 
 function Round(game,turn){
 	this.game = game;
+	//current turn
 	this.currentTurn = turn;
+	//deck mix
 	var d = new Deck().mix();
-	this.game.player1.cards = [d[0],d[2],d[4]];
-	this.game.player2.cards = [d[1],d[3],d[5]];
+	//cards player 1 && cards player 2
+	if (turn == this.game.player1){
+		this.game.player1.cards = [d[0],d[2],d[4]];
+		this.game.player2.cards = [d[1],d[3],d[5]];
+	}
+	else{
+		this.game.player2.cards = [d[0],d[2],d[4]];
+		this.game.player1.cards = [d[1],d[3],d[5]];
+	}
+	//calculate envido points for players
 	this.game.player1.pointsenv = game.player1.getPoints();
 	this.game.player2.pointsenv = game.player2.getPoints();
+	//state machine 
 	this.fsm = newTrucoFSM();
-	this.status='running';
+	//score truco
 	this.scoretruco=1;
+	//played cards in the table
 	this.playedcards = [];
+	//previus states
 	this.estados= [];
+	//array of who won each hand
 	this.manosganadas= [];
 }
 
@@ -86,7 +100,6 @@ Round.prototype.switchPlayer = function (player){
 //Inserta una carta en la lista de cartas jugadas. Con manosganadas controlamos como va el juego.
 Round.prototype.insertCard = function (card){
 	//A la lista en la ultima posicion no ocupada guarda la carta jugada (independientemente de que jugador sea)
-	if (card !== undefined){
 		this.playedcards.push(card);
 		if ((this.playedcards.length === 2)||(this.playedcards.length  === 4) || (this.playedcards.length === 6)){
 			//Si la cantidad de cartas jugadas es par, hay que confrontarlas para saber quien gana la mano
@@ -96,22 +109,22 @@ Round.prototype.insertCard = function (card){
 			if (a===1){
 				//Si c1 le gana a c2
 				if (this.currentTurn ==this.game.player1){
-					//Y es el turno de player1 (player1 jugo c1) le sumamos 1 a manos ganadas
+					//Y es el turno de player1 (player1 jugo c1) agregamos 1 a manos ganadas
 					this.manosganadas.push (1);
 				}
 				else{
-					//Sino le restamos 1
+					//Sino agregamos 1
 					this.manosganadas.push (-1);
 				}
 			}
 			if (a===-1){
 				//Si c2 le gana a c1
 				if (this.currentTurn ==this.game.player1){
-					//Y es el turno de player1 (player1 jugo c1) le restamos 1 a manos ganadas
+					//Y es el turno de player1 (player1 jugo c1) agregamos 1 a manos ganadas
 					this.manosganadas.push (-1);
 				}
 				else{
-					//Sino le sumamos 1
+					//Sino agregamos 1
 					this.manosganadas.push (1);
 				}
 			}
@@ -119,11 +132,7 @@ Round.prototype.insertCard = function (card){
 				//Si las cartas empatan, no se le suma nada
 				this.manosganadas.push (0);
 			}
-		}
-	}
-	else{
-		throw new Error("[ERROR] PLAYED CARD...");
-	}	
+		}	
 }
 
 //Controla si existe un ganador.
@@ -181,7 +190,7 @@ Round.prototype.calculateScore = function(action){
     				this.game.score[0] +=1;
     			}
 
-   		 	}
+   		 	} 
    		}
    		if (this.estados[this.estados.length-1]=="truco"){
    			//En cambio si se llego desde un truco
