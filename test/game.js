@@ -9,7 +9,7 @@ var Player = playerModel.player;
 var cardModel = require("../models/card.js");
 var Card = cardModel.card;
 
-describe('Game',function(){
+/*describe('Game',function(){
 	it('should have player 1', function(){
 		var p1 = new Player('Pedro');
 		var p2 = new Player('Juan');
@@ -231,4 +231,4 @@ describe('Game play (2)', function(){
 
   expect(game.score).to.deep.equal([4, 2]);
   });
-});
+});*/

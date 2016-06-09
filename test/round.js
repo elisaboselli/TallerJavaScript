@@ -8,7 +8,7 @@ var Game = gameModel.game;
 var Player = playerModel.player;
 var Card = cardModel.card;
 
-describe('Round',function(){
+/*describe('Round',function(){
 	var g = new Game();
 	g.newRound();
 
@@ -20,7 +20,7 @@ describe('Round',function(){
 		expect(g.player2.cards).to.have.lengthOf(3);
 	});
 
-});
+});*/
 
 //COPIADO DEL GIT DEL PROFE: Hay que controlarlo despues porque me parece que hay algunas funciones que no existen.
 /*describe('Round', function(){
