@@ -15,10 +15,22 @@ describe('Player',function(){
 		var p = new Player(data);
 		p.save(function (err, player) {
 			if(err){
-				done(err)
+				console.log("err 1");
+				console.log(err);
+				done(err);
 			}
-			expect(player.name).to.be.eq(data.name);
-			done();
+			Player.findOne({name:p.name},function(err,result){
+				if (err) {
+					console.log("err 2");
+					console.log(err);
+					done(err);
+				}
+				expect(result.name).to.be.eq('Leo');
+				done();
+
+			});
+			//expect(player.name).to.be.eq(data.name);
+			//done();
 		});
 
 	});
@@ -46,6 +58,7 @@ describe ('Puntos del Envido', function(){
 	it('7 de basto , 12 de oro, 3 de basto  deberia devolver 30',function(){
 		var aux = [new Card(7,'basto'),new Card(12,'oro'),new Card(3,'basto')];
 		var p=new Player ({name:"Leo", password:"1234", cards: aux});
+		//console.log(p);
 		expect(p.getPoints()).to.be.equal(30);
 	});
 
@@ -169,4 +182,5 @@ describe ('Puntos del Envido', function(){
 		p.cards=[c1,c2,c3] ;
 		expect(p.getPoints()).to.be.equal(20);
 	});
-});*/
+});
+*/

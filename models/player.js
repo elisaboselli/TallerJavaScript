@@ -1,6 +1,7 @@
 var mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost/truco");
-var db = mongoose.connection;
+//mongoose.connect("mongodb://localhost/truco");
+//var db = mongoose.connection;
+//var db = mongoose.createConnection('mongodb://localhost/truco');
 var playerSchema = mongoose.Schema({
 	name: String,
 	password: String,
@@ -8,16 +9,16 @@ var playerSchema = mongoose.Schema({
 	pointsEnv: Number
 })
 
-var Player=mongoose.model('Player',playerSchema)
+var Player=mongoose.model('Player',playerSchema);
 
-/*function Player(game, name){
+/*function Player(name){
 	//name player
 	this.name=name;
 	//player cards
 	this.cards= [];
 	//envido points of player
 	this.pointsenv=0;
-}*/
+};*/
 
 //Jugamos la carta en la posicion x
 Player.prototype.jugarCarta = function(x){
