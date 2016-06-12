@@ -86,17 +86,17 @@ describe('Game',function(){
             console.log(err);
             done(err)
           }
-          console.log(game.toString());
+          //console.log(game.toString());
           Game.findOne({player2:player2._id},function(err,result){
-            console.log(result);
+            //console.log(result);
             if (err) {
               console.log("err");
               console.log(err);
               done(err);
             }
             Player.findOne({_id:result.player2}, function(err,result2){
-              console.log(result2.name);
-              expect(result2.name).to.be.eq('Leoa');
+              //console.log(result2.name);
+              expect(result2.name).to.be.eq('Bruno');
               done();
             });
             //expect(result.player2.name).to.be.eq('Leoa');
