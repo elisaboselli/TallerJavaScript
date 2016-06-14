@@ -11,35 +11,6 @@ var Card = cardModel.card;
 
 describe('Game',function(){
 	it('should have two players', function(done){
-    //console.log("PLAYER !!");
-    //console.log(p1);
-    
-    /*var pla1;
-    var pla2;
-    p1.save(function (err,player1){
-      console.log("player1 hola");
-      if(err){
-        console.log(err);
-        done(err)
-      }
-      pla1=player1;
-      //expect(game.player1).to.be.eq(data.player1);
-      // expect(game.player2).to.be.eq(data.player2);
-      //done();
-    });
-    p2.save(function (err,player2){
-      console.log("player2 hola");
-      if(err){
-        console.log(err);
-        done(err)
-      }
-      pla2=player2;
-      //expect(game.player1).to.be.eq(data.player1);
-      // expect(game.player2).to.be.eq(data.player2);
-      //done();
-    });
-    console.log("pla1");
-    console.log(pla1);*/
 
     var cartasp1 = [new Card(7,'basto'),new Card(12,'oro'),new Card(3,'basto')];
     var cartasp2 = [new Card(1,'basto'),new Card(1,'espada'),new Card(7,'espada')];
@@ -47,25 +18,19 @@ describe('Game',function(){
     var p2 = new Player({name: "Bruno", password:"5678", cards: cartasp2 , pointsEnv: 28});
     
     p1.save(function (err,player1){
-      //console.log("player1 hola");
+
       if(err){
         console.log(err);
         done(err)
       }
-      //pla1=player1;
-      //expect(game.player1).to.be.eq(data.player1);
-      // expect(game.player2).to.be.eq(data.player2);
-      //done();
+
       p2.save(function (err,player2){
-        //console.log("player2 hola");
+
         if(err){
           console.log(err);
           done(err)
         }
-        //pla2=player2;
-        //expect(game.player1).to.be.eq(data.player1);
-        // expect(game.player2).to.be.eq(data.player2);
-        //done();
+
         var data = {
           name : 'My Game',
           player1: player1,
@@ -74,39 +39,38 @@ describe('Game',function(){
           currentHand: player2,
           currentRound : undefined,
           score : [0,0]
-        }
-        //console.log("DATA !!");
-        //console.log(data);
+        };
+
         var g = new Game(data);
-        //console.log("Game !!");
-        //console.log(g);
+
         g.save(function (err, game) {
-          //console.log("Game hola");
+
           if(err){
             console.log(err);
             done(err)
           }
-          //console.log(game.toString());
+          
           Game.findOne({player2:player2._id},function(err,result){
-            //console.log(result);
+            
             if (err) {
               console.log("err");
               console.log(err);
               done(err);
             }
             Player.findOne({_id:result.player2}, function(err,result2){
-              //console.log(result2.name);
               expect(result2.name).to.be.eq('Bruno');
               done();
+
             });
-            //expect(result.player2.name).to.be.eq('Leoa');
+
           });
-          //expect(game.player1.name).to.be.eq(data.player1.name);
-          //expect(game.player2.name).to.be.eq(data.player2.name);
-          //done();
+
         });
+
       });
+
     });
+    
 	});
 	
 	/*it('should have player 2', function(){

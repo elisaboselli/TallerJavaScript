@@ -4,7 +4,7 @@ var mongoose = require("mongoose");
 //var db = mongoose.createConnection('mongodb://localhost/truco');
 var playerSchema = mongoose.Schema({
 	name: String,
-	password: String,
+	//password: String,
 	cards: Array,
 	pointsEnv: Number
 })

@@ -2,25 +2,28 @@ var roundModel = require("./round.js");
 var playerModel = require("./player.js");
 var Round = roundModel.round;
 var Player = playerModel.player;
-
 var mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost/truco");
+/*mongoose.connect("mongodb://localhost/truco");
 var db = mongoose.connection;
 //var db = mongoose.createConnection('mongodb://localhost/truco');
 db.on('error',console.error.bind(console,'connection error'));
 db.once('open',function(){
   console.log('connection on');
-});
+});*/
 
 var ObjectId = mongoose.Schema.Types.ObjectId;
 
 var gameSchema = mongoose.Schema({
   name : String,
-  player1 : { type: ObjectId, ref: 'Player' },
-  player2 : { type: ObjectId, ref: 'Player' },
-  rounds : Array,
-  currentHand : { type: ObjectId, ref: 'Player' },
-  currentRound : { type: ObjectId, ref: 'Round' },
+  //player1 : { type: ObjectId, ref: 'Player' },
+  player1: Object,
+  //player2 : { type: ObjectId, ref: 'Player' },
+  player2:Object,
+  //rounds : Array,
+  currentHand :Object,
+  //currentHand : { type: ObjectId, ref: 'Player' },
+  currentRound : Object,
+  //currentRound : { type: ObjectId, ref: 'Round' },
   score : Array
 });
 
