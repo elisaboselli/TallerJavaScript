@@ -1,4 +1,19 @@
 extends layout
 
 block content
-  p #{g.name}
+  .container
+    h1 Jugar Ronda
+    p.lead Player1 #{g.score[0]} | Player2 #{g.score[1]}  #{g.currentRound.fsm.current} 
+    br
+    - p = "nada"
+    - f = function(parametro){p=parametro;}	;
+    //button.btn.btn-default(type='button',onclick = f('ENVIDO')) Envido
+    //button.btn.btn-default(type='button',onclick = f('TRUCO')) Truco
+    form(role='form', action="/play",method="post", style='max-width: 300px;')
+      .form-group
+          //input.form-control(type="hidden", name='jugada', value='#{p}')
+          input.form-control(type="hidden", name='gameid', value='#{g._id}')
+          input.form-control(type="submit", name="jugada", value='truco')
+          input.form-control(type="submit", name="jugada", value='envido')
+      //button.btn.btn-default(type='submit',name= 'nise',value='jugue') Jugar
+      &nbsp;

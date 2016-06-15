@@ -5,6 +5,7 @@ var router = express.Router();
 
 var Game = require("../models/game").game;
 var Player = require("../models/player").player;
+var Round = require("../models/round").round;
 
 /* GET home page. */
 router.get('/', function (req, res) {
@@ -61,16 +62,25 @@ router.post('/newgame', function(req,res){
 });
 
 router.get('/play', function(req,res){
-    //res.status(200).send("playing !!");
-    /*console.log(req);
-    console.log("body");
-    console.log(req.query.gameid);
-    console.log("lala");*/
     Game.findOne({_id:req.query.gameid},function(err,game){
-        console.log(game);
+        //console.log(game);
+        //console.log("chanchada");
+        if ((game.currentRound==undefined) || (game.currentRound.fsm.current()==fin)){
+            game.newRound();
+            //console.log(game.currentRound)
+        }
+        //console.log(game.player1.cards)
         res.render('play', {g : game});
     });
 
+});
+router.post('/play', function(req,res){
+    var jug = req.body;
+    console.log('hasta los huevos');
+    console.log(jug);
+    Game.findOne({_id:req.body.gameid}, function(err,game){
+        console.log(game);
+    })
 });
 
 router.get('/ping', function(req, res){

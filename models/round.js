@@ -42,8 +42,8 @@ function Round(game,turn){
 		this.game.player1.cards = [d[1],d[3],d[5]];
 	}
 	//calculate envido points for players
-	this.game.player1.pointsenv = game.player1.getPoints();
-	this.game.player2.pointsenv = game.player2.getPoints();
+	//this.game.player1.pointsenv = game.player1.getPoints();
+	//this.game.player2.pointsenv = game.player2.getPoints();
 	//state machine 
 	this.fsm = newTrucoFSM();
 	//score truco
