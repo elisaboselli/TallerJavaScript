@@ -4,13 +4,15 @@ block content
     h1 Jugar Ronda
     h2 Juega #{g.currentRound.currentTurn.name}
     h2 Cartas
-    h3 carta 1: #{g.currentRound.currentTurn.cards[0].number} de #{g.currentRound.currentTurn.cards[0].suit}  
-    h3 carta 2: #{g.currentRound.currentTurn.cards[1].number} de #{g.currentRound.currentTurn.cards[1].suit} 
-    h3 carta 3: #{g.currentRound.currentTurn.cards[2].number} de #{g.currentRound.currentTurn.cards[2].suit} 
+    h3 estado: #{g.currentRound.fsm.current}
+    h3 carta 1: #{g.currentRound.currentTurn.cards[0].number} de #{g.currentRound.currentTurn.cards[0].suit}
+    h3 carta 2: #{g.currentRound.currentTurn.cards[1].number} de #{g.currentRound.currentTurn.cards[1].suit}
+    h3 carta 3: #{g.currentRound.currentTurn.cards[2].number} de #{g.currentRound.currentTurn.cards[2].suit}
+    h3 Puntos : #{g.currentRound.currentTurn.pointsenv}
     lead elija que jugar
     br
     - p = "nada"
-    - f = function(parametro){p=parametro;}	;
+    - f = function(parametro){p=parametro;};
     form(role='form', action="/play",method="post", style='max-width: 300px;')
       .form-group
           input.form-control(type="hidden", name='gameid', value='#{g._id}')
@@ -21,4 +23,4 @@ block content
           input.form-control(type="submit", name="jugada", value='play card1')
           input.form-control(type="submit", name="jugada", value='play card2')
           input.form-control(type="submit", name="jugada", value='play card3')
-      &nbsp;
+        &nbsp;

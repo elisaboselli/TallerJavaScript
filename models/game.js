@@ -11,7 +11,7 @@ db.once('open',function(){
   console.log('connection on');
 });*/
 
-var ObjectId = mongoose.Schema.Types.ObjectId;
+//var ObjectId = mongoose.Schema.Types.ObjectId;
 
 var gameSchema = mongoose.Schema({
   name : String,
@@ -65,8 +65,9 @@ Game.prototype.win = function(){
 //Create and return a new Round to this game
 Game.prototype.newRound = function(){
   this.currentHand = this.switchPlayer(this.currentHand);
-  var round = new Round(this, this.currentHand);
-  this.currentRound = round;
+  //var round = new Round(this, this.currentHand);
+  //this.currentRound = round;
+  this.currentRound = new Round(this, this.currentHand);
   //this.rounds.push(round);
   return this;
 };

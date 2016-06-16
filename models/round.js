@@ -1,3 +1,4 @@
+var mongoose = require("mongoose");
 var deckModel = require("./deck.js");
 var gameModel = require("./game.js");
 var cardModel = require("./card.js");
@@ -5,13 +6,16 @@ var playerModel = require("./player.js");
 var Deck = deckModel.deck;
 var Game = gameModel.game;
 var Card = cardModel.card;
-var Player = playerModel;
+var Player = playerModel.player;
 
 var StateMachine = require("../node_modules/javascript-state-machine/state-machine.js");
 
-function newTrucoFSM(){
+function newTrucoFSM(estadoinit){
+	if (estadoinit===undefined){
+		estadoinit = 'init'; 
+	}
   var fsm = StateMachine.create({
-  initial: 'init',
+  initial: estadoinit,
   events: [
     { name: 'play card', from: 'init',                           to: 'primer carta' },
     { name: 'envido',    from: ['init', 'primer carta'],         to: 'envido' },
@@ -26,30 +30,45 @@ function newTrucoFSM(){
 
   return fsm;
 }
+var roundSchema = mongoose.Schema({
+	currentTurn : Object,
+	currentHand : Object,
+	player1 : Object,
+	player2 : Object,
+	fsm : Object,
+	scoretruco : Number,
+	playedcards : Array,
+	estados : Array,
+	manosganadas : Array,
+	score : Array 
+});
 
+var Round=mongoose.model('Round',roundSchema);
 
+/*
 function Round(game,turn){
 	//current turn
 	this.currentTurn = turn;
-	this.currentHand = turn;
+	this.currentHand = this.currentTurn;
 	//deck mix
 	var d = new Deck().mix();
 	//cards player 1 && cards player 2
 	this.player1= game.player1;
 	this.player2= game.player2;
-	if (turn == game.player1){
-		this.player1.cards = [d[0],d[2],d[4]];
-		this.player2.cards = [d[1],d[3],d[5]];
-	}
-	else{
-		this.player2.cards = [d[0],d[2],d[4]];
-		this.player1.cards = [d[1],d[3],d[5]];
-	}
+
+	this.player1.cards = [d[0],d[2],d[4]];
+	this.player2.cards = [d[1],d[3],d[5]];
+
+	var p1= new Player(this.player1);
+	var p2= new Player(this.player2);
+
+	console.log(this.player1.cards);
+
 	//calculate envido points for players
-	this.player1.pointsenv = game.player1.getPoints();
-	this.player2.pointsenv = game.player2.getPoints();
+	this.player1.pointsenv = p1.getPoints();
+	this.player2.pointsenv = p2.getPoints();
 	//state machine 
-	this.fsm = newTrucoFSM();
+	this.fsm = newTrucoFSM(estado);
 	//score truco
 	this.scoretruco=1;
 	//played cards in the table
@@ -60,7 +79,11 @@ function Round(game,turn){
 	this.manosganadas= [];
 	this.score= [0,0];
 }
-
+*/
+Round.prototype.estado = function(estadoinit) {
+	this.fsm=newTrucoFSM(estadoinit);
+	// body...
+};
 //Devuelve el jugador que gana el envido (compara puntos)
 Round.prototype.confrontPoints = function(){
 	if(this.player1.pointsenv>this.player2.pointsenv){
@@ -93,7 +116,7 @@ Round.prototype.changeTurn = function(){
 
 //Cambia el jugador
 Round.prototype.switchPlayer = function (player){
-  if (player === this.player1){
+  if (player.name === this.player1.name){
   	player = this.player2;
   }
   else{
@@ -179,10 +202,10 @@ Round.prototype.calculateScore = function(action){
   			//Desde un envido
     		if (action == "quiero"){
     			//Y se quiso, le asignamos +2 puntos al ganador del envido.
-   	 			if (this.confrontPoints()=== this.game.player1){
+   	 			if (this.confrontPoints()=== this.player1){
     				this.score[0] += 2;
    			 	}
-    			if (this.confrontPoints()=== this.game.player2){
+    			if (this.confrontPoints()=== this.player2){
     				this.score[1] += 2;
    	 			}
  		   	}
