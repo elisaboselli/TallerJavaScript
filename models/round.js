@@ -1,9 +1,11 @@
 var deckModel = require("./deck.js");
 var gameModel = require("./game.js");
 var cardModel = require("./card.js");
+var playerModel = require("./player.js");
 var Deck = deckModel.deck;
 var Game = gameModel.game;
 var Card = cardModel.card;
+var Player = playerModel;
 
 var StateMachine = require("../node_modules/javascript-state-machine/state-machine.js");
 
@@ -27,23 +29,25 @@ function newTrucoFSM(){
 
 
 function Round(game,turn){
-	this.game = game;
 	//current turn
 	this.currentTurn = turn;
+	this.currentHand = turn;
 	//deck mix
 	var d = new Deck().mix();
 	//cards player 1 && cards player 2
-	if (turn == this.game.player1){
-		this.game.player1.cards = [d[0],d[2],d[4]];
-		this.game.player2.cards = [d[1],d[3],d[5]];
+	this.player1= game.player1;
+	this.player2= game.player2;
+	if (turn == game.player1){
+		this.player1.cards = [d[0],d[2],d[4]];
+		this.player2.cards = [d[1],d[3],d[5]];
 	}
 	else{
-		this.game.player2.cards = [d[0],d[2],d[4]];
-		this.game.player1.cards = [d[1],d[3],d[5]];
+		this.player2.cards = [d[0],d[2],d[4]];
+		this.player1.cards = [d[1],d[3],d[5]];
 	}
 	//calculate envido points for players
-	//this.game.player1.pointsenv = game.player1.getPoints();
-	//this.game.player2.pointsenv = game.player2.getPoints();
+	this.player1.pointsenv = game.player1.getPoints();
+	this.player2.pointsenv = game.player2.getPoints();
 	//state machine 
 	this.fsm = newTrucoFSM();
 	//score truco
@@ -54,18 +58,19 @@ function Round(game,turn){
 	this.estados= [];
 	//array of who won each hand
 	this.manosganadas= [];
+	this.score= [0,0];
 }
 
 //Devuelve el jugador que gana el envido (compara puntos)
 Round.prototype.confrontPoints = function(){
-	if(this.game.player1.pointsenv>this.game.player2.pointsenv){
-		return this.game.player1;
+	if(this.player1.pointsenv>this.player2.pointsenv){
+		return this.player1;
 	}
-	if(this.game.player1.pointsenv<this.game.player2.pointsenv){
-		return this.game.player2;
+	if(this.player1.pointsenv<this.player2.pointsenv){
+		return this.player2;
 	}
-	if(this.game.player1.pointsenv===this.game.player2.pointsenv){
-			return this.game.currentHand;
+	if(this.player1.pointsenv===this.player2.pointsenv){
+			return this.currentHand;
 	}
 }
 
@@ -88,11 +93,11 @@ Round.prototype.changeTurn = function(){
 
 //Cambia el jugador
 Round.prototype.switchPlayer = function (player){
-  if (player === this.game.player1){
-  	player = this.game.player2;
+  if (player === this.player1){
+  	player = this.player2;
   }
   else{
-  	player = this.game.player1;
+  	player = this.player1;
   }
   return player;
 };
@@ -108,7 +113,7 @@ Round.prototype.insertCard = function (card){
 			var a = (c1.confront(c2));
 			if (a===1){
 				//Si c1 le gana a c2
-				if (this.currentTurn ==this.game.player1){
+				if (this.currentTurn ==this.player1){
 					//Y es el turno de player1 (player1 jugo c1) agregamos 1 a manos ganadas
 					this.manosganadas.push (1);
 				}
@@ -119,7 +124,7 @@ Round.prototype.insertCard = function (card){
 			}
 			if (a===-1){
 				//Si c2 le gana a c1
-				if (this.currentTurn ==this.game.player1){
+				if (this.currentTurn ==this.player1){
 					//Y es el turno de player1 (player1 jugo c1) agregamos 1 a manos ganadas
 					this.manosganadas.push (-1);
 				}
@@ -145,20 +150,20 @@ Round.prototype.winner = function(){
 		}
 		if (sum>0){
 			//Si se sumo 2 veces 1 significa que player1 gano 2 manos por lo tanto es ganador
-			return this.game.player1;
+			return this.player1;
 		}
 		if (sum<0){
 			//Si se resto 2 veces 1 significa que player2 gano 2 manos por lo tanto es ganador
-			return this.game.player2;
+			return this.player2;
 		}
 		if (sum ===0 && (this.playedcards.length === 6) ){
 			//Si se jugaron las 6 cartas y se empataron todas, o bien ganaron una vez cada uno y empataron en el restante, se devuelve el jugador que es mano.
 			if (this.manosganadas[0]=== -1){
-					var noHand = this.switchPlayer(this.game.currentHand);
+					var noHand = this.switchPlayer(this.currentHand);
 					return noHand			
 			}
 			else {
-					return this.game.currentHand;		
+					return this.currentHand;		
 			}
 		}
 	}
@@ -175,19 +180,19 @@ Round.prototype.calculateScore = function(action){
     		if (action == "quiero"){
     			//Y se quiso, le asignamos +2 puntos al ganador del envido.
    	 			if (this.confrontPoints()=== this.game.player1){
-    				this.game.score[0] += 2;
+    				this.score[0] += 2;
    			 	}
     			if (this.confrontPoints()=== this.game.player2){
-    				this.game.score[1] += 2;
+    				this.score[1] += 2;
    	 			}
  		   	}
     		if (action=="no-quiero"){
     			//Y no se quiso, le asignamos +1 punto al contrario del que tiene el turno (ya que el que tiene el turno dijo "no quiero")
-    			if (this.game.player1 === this.currentTurn){
-    				this.game.score[1] += 1; 
+    			if (this.player1 === this.currentTurn){
+    				this.score[1] += 1; 
    		 		}
     			else{
-    				this.game.score[0] +=1;
+    				this.score[0] +=1;
     			}
 
    		 	} 
@@ -196,18 +201,18 @@ Round.prototype.calculateScore = function(action){
    			//En cambio si se llego desde un truco
     		if (action=="no-quiero"){
     			//Y no se quiso, le asignamos los puntos del truco al contrario del que tiene el turno (ya que el que tiene el turno dijo "no quiero")
-    			if (this.game.player1 === this.currentTurn){
-    				this.game.score[1] += this.scoretruco; 
+    			if (this.player1 === this.currentTurn){
+    				this.score[1] += this.scoretruco; 
    			 	}
     			else{
-    				this.game.score[0] += this.scoretruco;
+    				this.score[0] += this.scoretruco;
     			}
     			//Y finalizamos
     			this.fsm.finalizar();
     		}
     		//Y si se quiso, aumentamos en 1 los puntos acumulados del truco y los dejamos en espera para ver quien gana la mano
     		else {
-    			this.scoretruco += 1;
+    			this.scoretruco += 10;
     		}
 		}
 	}
@@ -225,11 +230,11 @@ Round.prototype.play = function(action, value) {
   		this.insertCard(value);
   		if (this.winner ()!==null){
   			//Y si hay un ganador le asigna los puntos a los correspondientes.
-  			if (this.winner()===this.game.player1){
-  				this.game.score[0]+=this.scoretruco;
+  			if (this.winner()===this.player1){
+  				this.score[0]+=this.scoretruco;
   			}
   			else{
-  				this.game.score[1]+=this.scoretruco;
+  				this.score[1]+=this.scoretruco;
   			}
   			//Por ultimo finalizamos.
   			this.fsm.finalizar();

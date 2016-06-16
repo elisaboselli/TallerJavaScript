@@ -47,7 +47,6 @@ var Game=mongoose.model('Game',gameSchema);
 Game.prototype.play = function(player, action, value){
   if(this.currentRound.currentTurn !== player)
     throw new Error("[ERROR] INVALID TURN...");
-
   if(this.currentRound.fsm.cannot(action))
     throw new Error("[ERROR] INVALID MOVE...");
   if (action=="play card" && value == undefined)
@@ -57,14 +56,20 @@ Game.prototype.play = function(player, action, value){
   return this.currentRound.play(action, value);
 };
 
+Game.prototype.win = function(){
+  if (this.score[0]>=30 && this.score[1]>=30){
+    return true;
+  }
+  return false;
+};
 //Create and return a new Round to this game
 Game.prototype.newRound = function(){
-	this.currentHand = this.switchPlayer(this.currentHand);
+  this.currentHand = this.switchPlayer(this.currentHand);
   var round = new Round(this, this.currentHand);
   this.currentRound = round;
   //this.rounds.push(round);
   return this;
-}
+};
 
 //returns the oposite player
 Game.prototype.switchPlayer = function (player) {

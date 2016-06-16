@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  .container
+    h1 Resultado del juego
+    h2 Player 1 = #{g.score[0]}
+    h2 Player 2 = #{g.score[1]}
+    a(href='/')
+      button.btn.btn-primary(type="button") Inicio
+
+

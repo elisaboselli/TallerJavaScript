@@ -49,39 +49,85 @@ router.get('/newgame',function(req,res){
 router.post('/newgame', function(req,res){
     var p1 = new Player ({name : req.body.Player1});
     var p2 = new Player ({name : req.body.Player2});
-    var g = new Game ({name : req.body.GameName, player1 : p1 , player2 : p2});
+    var g = new Game ({name : req.body.GameName, player1 : p1 , player2 : p2 , score: [0,0], currentHand: p2});
+    g.newRound();
     g.save(function (err, game){
         if(err){
             console.log(err);
-        }  
-        //Game.findOne({name:game.name},function(err,result){ 
-        //    console.log(result); 
-        //});
+        } 
          res.redirect('/play?gameid=' + game._id);
     });
 });
 
 router.get('/play', function(req,res){
     Game.findOne({_id:req.query.gameid},function(err,game){
-        //console.log(game);
-        //console.log("chanchada");
-        if ((game.currentRound==undefined) || (game.currentRound.fsm.current()==fin)){
-            game.newRound();
-            //console.log(game.currentRound)
-        }
-        //console.log(game.player1.cards)
-        res.render('play', {g : game});
+        res.render('play', {g : game});     
     });
-
 });
+
 router.post('/play', function(req,res){
     var jug = req.body;
     console.log('hasta los huevos');
-    console.log(jug);
     Game.findOne({_id:req.body.gameid}, function(err,game){
-        console.log(game);
+        if (req.body.jugada!== 'play card1' && req.body.jugada!== 'play card2' &&req.body.jugada!== 'play card3'){
+        game.play(game.currentRound.currentTurn,req.body.jugada);
+        }
+        if (req.body.jugada == 'play card1'){
+            console.log('ok');
+            game.play(game.currentRound.currentTurn,'play card',game.currentRound.currentTurn.cards[0]);   
+        }
+        if (req.body.jugada == 'play card2'){
+            game.play(game.currentRound.currentTurn,'play card',game.currentRound.currentTurn.cards[1]);   
+        }
+        if (req.body.jugada == 'play card3'){
+            game.play(game.currentRound.currentTurn,'play card',game.currentRound.currentTurn.cards[2]);   
+        }
+        game.save(function (err, g){
+            if(err){
+               console.log(err);
+             }  
+            if(g.currentRound.fsm.current=='fin') {
+                g.score = g.currentRound.score;
+                if (g.win()){
+                    res.redirect('/resultadogame?gameid=' + g._id);
+                 }
+                else{
+                    res.redirect('/resultadoround?gameid=' + g._id);
+                }
+            }
+            res.redirect('/play?gameid=' + g._id);
+         });
     })
 });
+
+router.get('/resultadogame', function(req,res){
+    Game.findOne({_id:req.query.gameid},function(err,game){
+        //MANEJAR ERRORES!!!
+        res.render('resultadogame',{g:game});
+    });
+});
+
+router.post('/resultadogame', function(req,res){
+        res.redirect('/');
+    });
+router.get('/resultadoround', function(req,res){
+    Game.findOne({_id:req.query.gameid},function(err,game){
+        //MANEJAR ERRORES!!!
+        res.render('resultadoround',{g:game});
+    });
+});
+router.post('/resultadoround', function(req,res){
+    Game.findOne({_id:req.body.gameid}, function(err,game){
+        game.newRound();
+        game.save(function (err, g){
+            if(err){    
+                console.log(err);
+            }
+            res.redirect('/play?gameid=' + g._id);
+        });
+    });
+});
+
 
 router.get('/ping', function(req, res){
     res.status(200).send("pong!");
