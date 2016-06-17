@@ -27,6 +27,8 @@ var gameSchema = mongoose.Schema({
   score : Array
 });
 
+
+
 var Game=mongoose.model('Game',gameSchema);
 
 /*function Game(){

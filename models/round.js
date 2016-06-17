@@ -30,22 +30,6 @@ function newTrucoFSM(estadoinit){
 
   return fsm;
 }
-var roundSchema = mongoose.Schema({
-	currentTurn : Object,
-	currentHand : Object,
-	player1 : Object,
-	player2 : Object,
-	fsm : Object,
-	scoretruco : Number,
-	playedcards : Array,
-	estados : Array,
-	manosganadas : Array,
-	score : Array 
-});
-
-var Round=mongoose.model('Round',roundSchema);
-
-/*
 function Round(game,turn){
 	//current turn
 	this.currentTurn = turn;
@@ -61,14 +45,11 @@ function Round(game,turn){
 
 	var p1= new Player(this.player1);
 	var p2= new Player(this.player2);
-
-	console.log(this.player1.cards);
-
 	//calculate envido points for players
 	this.player1.pointsenv = p1.getPoints();
 	this.player2.pointsenv = p2.getPoints();
 	//state machine 
-	this.fsm = newTrucoFSM(estado);
+	this.fsm = newTrucoFSM();
 	//score truco
 	this.scoretruco=1;
 	//played cards in the table
@@ -79,10 +60,9 @@ function Round(game,turn){
 	this.manosganadas= [];
 	this.score= [0,0];
 }
-*/
-Round.prototype.estado = function(estadoinit) {
+
+Round.prototype.actState = function(estadoinit) {
 	this.fsm=newTrucoFSM(estadoinit);
-	// body...
 };
 //Devuelve el jugador que gana el envido (compara puntos)
 Round.prototype.confrontPoints = function(){
