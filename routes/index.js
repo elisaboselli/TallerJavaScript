@@ -53,9 +53,7 @@ router.get('/newgame',function(req,res){
 });
 /*POST newgame page*/
 router.post('/newgame', function(req,res){
-    var p1 = new Player ({name : req.body.Player1});
-    var p2 = new Player ({name : req.body.Player2});
-    var g = new Game ({name : req.body.GameName, player1 : p1 , player2 : p2 , score: [0,0], currentHand: p2});
+    var g = new Game ({name : req.body.GameName, player1 : req.body.Player1 , player2 : req.body.Player2 , score: [0,0], currentHand: req.body.Player2, fin:req.body.cantidad});
     g.save(function (err, game){;
         if(err){
             console.log(err);
@@ -65,25 +63,30 @@ router.post('/newgame', function(req,res){
 });
 /*GET play page*/
 router.get('/play', function(req,res){
-    console.log(req.query.gameid);
     Game.findOne({_id:req.query.gameid},function(err,game){
-        console.log(game.currentRound);
         if (game.currentRound == undefined){
             game.newRound();
             game.save(function(err,game2){
                 if (err){
                     console.log(err);
                 }
-                console.log(game2.currentRound);
                 res.render('play', {g : game2});
             });
         }
         var r = game.currentRound;
         r.__proto__ = Round.prototype;
         r.actState(r.fsm.current);
-        res.render('play', {g : game});
+        var turn=(game.currentRound.isTurn());
+        if (turn.handscards[0]!==null)
+            var c1 = './images/cards/'+(turn.handscards[0].number)+(turn.handscards[0].suit)+'.jpg';
+        if (turn.handscards[1]!==null)
+            var c2 = './images/cards/'+(turn.handscards[1].number)+(turn.handscards[1].suit)+'.jpg';
+        if (turn.handscards[2]!==null)
+            var c3 = './images/cards/'+(turn.handscards[2].number)+(turn.handscards[2].suit)+'.jpg';
+        res.render('play', {g : game, c1 : c1, c2 : c2, c3 : c3});
     });
 });
+
 
 /*POST play  page*/
 router.post('/play', function(req,res){
@@ -91,55 +94,48 @@ router.post('/play', function(req,res){
         var r = game.currentRound;
         r.__proto__ = Round.prototype;
         r.actState(r.fsm.current);
-        game.currentRound=r;
-        if (req.body.jugada!== 'play card1' && req.body.jugada!== 'play card2' &&req.body.jugada!== 'play card3'){
-            game.play(game.currentRound.currentTurn,req.body.jugada);
+        //game.currentRound=r;
+        if (req.body.jugada !== 'play card1' && req.body.jugada !== 'play card2' && req.body.jugada !== 'play card3'){
+            game.play(req.body.jugada);
         }
         if (req.body.jugada == 'play card1'){
-            game.play(game.currentRound.currentTurn,'play card',game.currentRound.currentTurn.cards[0]);   
+            game.play('play card',0);   
         }
         if (req.body.jugada == 'play card2'){
-            game.play(game.currentRound.currentTurn,'play card',game.currentRound.currentTurn.cards[1]);   
+            game.play('play card',1);   
         }
         if (req.body.jugada == 'play card3'){
-            game.play(game.currentRound.currentTurn,'play card',game.currentRound.currentTurn.cards[2]);   
+            game.play('play card',2);   
         }
-        game.save(function (err, g){
-            console.log('aca me muestra actualizado')
-            console.log(g.currentRound.fsm.current);
-            if(err){
-               console.log(err);
-             }
-             console.log(g._id);
-             Game.findOne({_id:g._id},function(err,game){
-                if(err){
-                    console.log(err)
+        if(r.fsm.current=='fin') {
+            game.score[0] += r.score[0];
+            game.score[1] += r.score[1];
+            Game.update({ _id: game._id }, { $set :{score : game.score ,currentRound:r}},function (err,result){    
+                if (game.win()){
+                    res.redirect('/resultadogame?gameid=' + game._id);
                 }
-                console.log('Aca me muestra desactualizado');
-                console.log(game._id);
-                console.log(game.currentRound.fsm.current);
-            });
-            if(g.currentRound.fsm.current=='fin') {
-                //tiene que ir en resultado game o resultado score o guardar de vuelta
-                g.score = g.currentRound.score;
-                if (g.win()){
-                    res.redirect('/resultadogame?gameid=' + g._id);
-                 }
                 else{
-                    res.redirect('/resultadoround?gameid=' + g._id);
+                    res.redirect('/resultadoround?gameid=' + game._id);
                 }
-            }
-            else{
-                res.redirect('/play?gameid=' + g._id);
-            }
-        });
+            });
+        }
+        else{
+            Game.update({ _id: game._id }, { $set :{currentRound : r }},function (err,result){
+                if(err){
+                    console.log(err);
+                }
+                res.redirect('/play?gameid=' + game._id);
+            });
+        }
     });
 });
 
 /*GET resaltadogame page*/
 router.get('/resultadogame', function(req,res){
     Game.findOne({_id:req.query.gameid},function(err,game){
-        //MANEJAR ERRORES!!!
+        if (err){
+            console.log(err);
+        }
         res.render('resultadogame',{g:game});
     });
 });
@@ -152,7 +148,9 @@ router.post('/resultadogame', function(req,res){
 /*GET resultadoround page*/
 router.get('/resultadoround', function(req,res){
     Game.findOne({_id:req.query.gameid},function(err,game){
-        //MANEJAR ERRORES!!!
+        if (err){
+            console.log(err);
+        }
         res.render('resultadoround',{g:game});
     });
 });
@@ -161,11 +159,11 @@ router.get('/resultadoround', function(req,res){
 router.post('/resultadoround', function(req,res){
     Game.findOne({_id:req.body.gameid}, function(err,game){
         game.newRound();
-        game.save(function (err, g){
+        Game.update({ _id: game._id }, { $set :{currentRound : game.currentRound , currentHand : game.currentHand }},function (err,result){
             if(err){    
                 console.log(err);
             }
-            res.redirect('/play?gameid=' + g._id);
+            res.redirect('/play?gameid=' + game._id);
         });
     });
 });

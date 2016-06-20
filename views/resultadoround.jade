@@ -10,7 +10,7 @@ block content
     h1 Resultado Parcial del Juego
     h2 Player 1 = #{g.score[0]}
     h2 Player 2 = #{g.score[1]}
-    form(role='form', action="/play",method="post", style='max-width: 300px;')
+    form(role='form', action="/resultadoround",method="post", style='max-width: 300px;')
       .form-group
         input.form-control(type="hidden", name='gameid', value='#{g._id}')
         button.btn.btn-default(type='submit') Continuar

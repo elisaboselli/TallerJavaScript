@@ -3,51 +3,74 @@ var playerModel = require("./player.js");
 var Round = roundModel.round;
 var Player = playerModel.player;
 var mongoose = require("mongoose");
+/*mongoose.connect("mongodb://localhost/truco");
+var db = mongoose.connection;
+//var db = mongoose.createConnection('mongodb://localhost/truco');
+db.on('error',console.error.bind(console,'connection error'));
+db.once('open',function(){
+  console.log('connection on');
+});*/
+
+//var ObjectId = mongoose.Schema.Types.ObjectId;
 
 var gameSchema = mongoose.Schema({
-  //Game name
   name : String,
-  //Player name
-  player1: String,
-  //player name
-  player2: String,
-  //hand of the game
-  currentHand :String,
-  //current Round
+  //player1 : { type: ObjectId, ref: 'Player' },
+  player1: Object,
+  //player2 : { type: ObjectId, ref: 'Player' },
+  player2:Object,
+  //rounds : Array,
+  currentHand :Object,
+  //currentHand : { type: ObjectId, ref: 'Player' },
   currentRound : Object,
-  //Score of the game
-  score : Array,
-  //Points to win
-  fin : Number 
+  //currentRound : { type: ObjectId, ref: 'Round' },
+  score : Array
 });
+
+
+
 var Game=mongoose.model('Game',gameSchema);
 
+/*function Game(){
+	//players of the game
+	this.player1 = new Player(this, "Player1");
+	this.player2 = new Player(this, "Player2");
+	//array of round played an the current
+	this.rounds = [];
+	//player hand
+	this.currentHand = this.player2;
+	//curren Round
+	this.currentRound = undefined;
+	//score of the game, this.score[0] is the score of the player 1,this.score[1] is the score of the player 1
+	this.score = [0,0];
+}*/
 
 //Check if it's valid move and play and card played (if action = play card) in the current round
-Game.prototype.play = function(action, value){
-  //Lo saque por que ahora los juegos solo los hace el turno corriente
-  /*if(this.currentRound.currentTurn !== player)
-    throw new Error("[ERROR] INVALID TURN...");*/
+Game.prototype.play = function(player, action, value){
+  if(this.currentRound.currentTurn !== player)
+    throw new Error("[ERROR] INVALID TURN...");
   if(this.currentRound.fsm.cannot(action))
     throw new Error("[ERROR] INVALID MOVE...");
-  //tengo que arreglar esto xq ahora manda solamente un numero
   if (action=="play card" && value == undefined)
   	throw new Error("[ERROR] PLAYED CARD...");
+
+
   return this.currentRound.play(action, value);
 };
 
-//retorna verdadero si ya hay un ganador
 Game.prototype.win = function(){
-  if (this.score[0]>=this.fin || this.score[1]>=this.fin){
+  if (this.score[0]>=30 && this.score[1]>=30){
     return true;
   }
   return false;
 };
-
 //Create and return a new Round to this game
 Game.prototype.newRound = function(){
   this.currentHand = this.switchPlayer(this.currentHand);
+  //var round = new Round(this, this.currentHand);
+  //this.currentRound = round;
   this.currentRound = new Round(this, this.currentHand);
+  //this.rounds.push(round);
   return this;
 };
 

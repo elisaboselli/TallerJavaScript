@@ -37,22 +37,27 @@ function Round(game,turn){
 	//deck mix
 	var d = new Deck().mix();
 	//cards player 1 && cards player 2
-	this.player1= new Player(game.player1);
-	this.player2= new Player(game.player2);
+	this.player1= game.player1;
+	this.player2= game.player2;
 
-	this.player1.handscards = [d[0],d[2],d[4]];
-	this.player2.handscards = [d[1],d[3],d[5]];
+	this.player1.cards = [d[0],d[2],d[4]];
+	this.player2.cards = [d[1],d[3],d[5]];
 
+	var p1= new Player(this.player1);
+	var p2= new Player(this.player2);
 	//calculate envido points for players
-	this.player1.pointsenv = this.player1.getPoints();
-	this.player2.pointsenv = this.player1.getPoints();
+	this.player1.pointsenv = p1.getPoints();
+	this.player2.pointsenv = p2.getPoints();
 	//state machine 
 	this.fsm = newTrucoFSM();
 	//score truco
 	this.scoretruco=1;
-	this.estados=[];
+	//played cards in the table
+	this.playedcards = [];
+	//previus states
+	this.estados= [];
 	//array of who won each hand
-	this.manosganadas=[];
+	this.manosganadas= [];
 	this.score= [0,0];
 }
 
@@ -68,73 +73,79 @@ Round.prototype.confrontPoints = function(){
 		return this.player2;
 	}
 	if(this.player1.pointsenv===this.player2.pointsenv){
-		return this.isHand();
+			return this.currentHand;
 	}
 }
 
 //Cambia el turno
 Round.prototype.changeTurn = function(){
-	if (this.fsm.current =="played card" && (this.player1.playedcards.length === this.player2.playedcards.length)){
+	if (this.fsm.current =="played card"){
 		//En el estado carta jugada
-		var c1=(this.player1.playedcards[this.player1.playedcards.length - 1]);
-		var c2=(this.player2.playedcards[this.player2.playedcards.length - 1]);
-		var a = (c1.weight - c2.weight);
-		if (a>0){
-			this.currentTurn=this.player1.name
-		}
-		if (a<0){
-			this.currentTurn=this.player2.name
-		}
-		if (a===0){
-			this.switchTurn();
+		if (((this.playedcards.length)  === 2) || (this.playedcards.length === 4)){
+			//Si se jugaron 2 o 4 cartas controla a quien le toca el turno (quien gana el "enfrentamiento" de cartas)
+			var aux = ((this.playedcards[this.playedcards.length - 1]).confront(this.playedcards[this.playedcards.length - 2]))
+			if (aux===1){
+				//Si aux = 1 entonces gano el que jugo ultimo, por lo tanto lo retorna (turno actual)
+				return this.currentTurn;
+			}
 		}
 	}
 	//Si no entra al if, cambia el turno
-	else{
-	this.switchTurn();
-	}
+	return this.currentTurn = this.switchPlayer(this.currentTurn);
 }
 
 //Cambia el jugador
-Round.prototype.switchTurn = function (){
-  if (this.currentTurn === this.player1.name){
-  	this.currentTurn = this.player2.name;
+Round.prototype.switchPlayer = function (player){
+  if (player.name === this.player1.name){
+  	player = this.player2;
   }
   else{
-  	this.currentTurn = this.player1.name;
+  	player = this.player1;
   }
+  return player;
 };
-//Ahora recive el numero de carta que hay que jugar de el jugador que tiene el turno (debe recibir 0,1 o 2)
-//Inserta una carta en la lista de cartas jugadas. Con manosganadas controlamos como va el juego.
-Round.prototype.insertCard = function (value){
-	if (this.currentTurn === this.player1.name){
-		this.player1.playedcards.push(this.player1.handscards[value]);
-		this.player1.handscards[value]=undefined;
-	}
-	else{
-		this.player2.playedcards.push(this.player2.handscards[value]);
-		this.player2.handscards[value]=undefined;
-	}
-	if (this.player1.playedcards.length === this.player2.playedcards.length){
-		var c1=(this.player1.playedcards[this.player1.playedcards.length - 1]);
-		var c2=(this.player2.playedcards[this.player2.playedcards.length - 1]);
-		var a = (c1.weight - c2.weight);
-		if (a>0){
-			this.manosganadas.push(1);
-		}
-		if (a<0){
-			this.manosganadas.push(-1);
-		}
-		if (a===0){
-			this.manosganadas.push(0);
-		}
-	}
-}
 
+//Inserta una carta en la lista de cartas jugadas. Con manosganadas controlamos como va el juego.
+Round.prototype.insertCard = function (card){
+	//A la lista en la ultima posicion no ocupada guarda la carta jugada (independientemente de que jugador sea)
+		this.playedcards.push(card);
+		if ((this.playedcards.length === 2)||(this.playedcards.length  === 4) || (this.playedcards.length === 6)){
+			//Si la cantidad de cartas jugadas es par, hay que confrontarlas para saber quien gana la mano
+			var c1=(this.playedcards[this.playedcards.length - 1]);
+			var c2=(this.playedcards[this.playedcards.length - 2]);
+			var a = (c1.confront(c2));
+			if (a===1){
+				//Si c1 le gana a c2
+				if (this.currentTurn ==this.player1){
+					//Y es el turno de player1 (player1 jugo c1) agregamos 1 a manos ganadas
+					this.manosganadas.push (1);
+				}
+				else{
+					//Sino agregamos 1
+					this.manosganadas.push (-1);
+				}
+			}
+			if (a===-1){
+				//Si c2 le gana a c1
+				if (this.currentTurn ==this.player1){
+					//Y es el turno de player1 (player1 jugo c1) agregamos 1 a manos ganadas
+					this.manosganadas.push (-1);
+				}
+				else{
+					//Sino agregamos 1
+					this.manosganadas.push (1);
+				}
+			}
+			if (a===0){
+				//Si las cartas empatan, no se le suma nada
+				this.manosganadas.push (0);
+			}
+		}	
+}
 
 //Controla si existe un ganador.
 Round.prototype.winner = function(){
-	if ((this.player1.playedcards.length === this.player2.playedcards.length) && ((this.player1.playedcards.length===2) ||(this.player1.playedcards.length===3))){
+	if (((this.playedcards.length)  === 4) || (this.playedcards.length === 6)){
 		//Si estamos en posicion de saber si hay un ganador (es decir si ya se jugaron al menos dos manos)
 		var sum=0;
 		for (var i = 0; i < this.manosganadas.length; i++){
@@ -148,35 +159,19 @@ Round.prototype.winner = function(){
 			//Si se resto 2 veces 1 significa que player2 gano 2 manos por lo tanto es ganador
 			return this.player2;
 		}
-		if ((sum ===0) && (this.manosganadas.length===3)){
+		if (sum ===0 && (this.playedcards.length === 6) ){
 			//Si se jugaron las 6 cartas y se empataron todas, o bien ganaron una vez cada uno y empataron en el restante, se devuelve el jugador que es mano.
-			if (this.manosganadas[0] === 0){
-				return this.isHand();
+			if (this.manosganadas[0]=== -1){
+					var noHand = this.switchPlayer(this.currentHand);
+					return noHand			
 			}
-			if (this.manosganadas[0]>0) {
-				return this.player1;		
-			}
-			if (this.manosganads[0]<0){
-				return this.player2;
+			else {
+					return this.currentHand;		
 			}
 		}
 	}
 	//Si todavia no se puede calcular un ganador se devuelve null
 	return null;
-}
-// devuelve el jugador que es mano
-Round.prototype.isHand = function(){
-	if (this.currentHand === this.player1.name) {
-		return this.player1;
-	}
-	return this.player2;
-}
-//devuelve el jugador que tiene el turno
-Round.prototype.isTurn = function(){
-	if (this.currentTurn === this.player1.name) {
-		return this.player1;
-	}
-	return this.player2;
 }
 
 //Calculamos puntajes
@@ -196,7 +191,7 @@ Round.prototype.calculateScore = function(action){
  		   	}
     		if (action=="no-quiero"){
     			//Y no se quiso, le asignamos +1 punto al contrario del que tiene el turno (ya que el que tiene el turno dijo "no quiero")
-    			if (this.player1.name === this.currentTurn){
+    			if (this.player1 === this.currentTurn){
     				this.score[1] += 1; 
    		 		}
     			else{
@@ -209,8 +204,8 @@ Round.prototype.calculateScore = function(action){
    			//En cambio si se llego desde un truco
     		if (action=="no-quiero"){
     			//Y no se quiso, le asignamos los puntos del truco al contrario del que tiene el turno (ya que el que tiene el turno dijo "no quiero")
-    			if (this.player1.name === this.currentTurn){
-    				this.score[1] += this.scoretruco;
+    			if (this.player1 === this.currentTurn){
+    				this.score[1] += this.scoretruco; 
    			 	}
     			else{
     				this.score[0] += this.scoretruco;
@@ -220,7 +215,7 @@ Round.prototype.calculateScore = function(action){
     		}
     		//Y si se quiso, aumentamos en 1 los puntos acumulados del truco y los dejamos en espera para ver quien gana la mano
     		else {
-    			this.scoretruco += 1;
+    			this.scoretruco += 10;
     		}
 		}
 	}
@@ -241,7 +236,7 @@ Round.prototype.play = function(action, value) {
   			if (this.winner()===this.player1){
   				this.score[0]+=this.scoretruco;
   			}
-  			else{;
+  			else{
   				this.score[1]+=this.scoretruco;
   			}
   			//Por ultimo finalizamos.

@@ -2,18 +2,13 @@ extends layout
 block content
   .container
     h1 Jugar Ronda
-    h2 Puntuacion ronda #{g.currentRound.score}
-    h2 Juega #{g.currentRound.currentTurn}
+    h2 Juega #{g.currentRound.currentTurn.name}
     h3 estado: #{g.currentRound.fsm.current}
-    H3 ACA IRIAN LAS CARTAS EN LA MESA
     h2 Cartas
-    if ((g.currentRound.isTurn()).handscards[0] != null)
-      h3 carta 1: #{(g.currentRound.isTurn()).handscards[0].number} de #{(g.currentRound.isTurn()).handscards[0].suit}
-    if ((g.currentRound.isTurn()).handscards[1] != null)
-      h3 carta 2: #{g.currentRound.isTurn().handscards[1].number} de #{(g.currentRound.isTurn()).handscards[1].suit}
-    if ((g.currentRound.isTurn()).handscards[2] != null)
-      h3 carta 3: #{g.currentRound.isTurn().handscards[2].number} de #{(g.currentRound.isTurn()).handscards[2].suit}
-    h3 Puntos : #{g.currentRound.isTurn().pointsenv}
+    h3 carta 1: #{g.currentRound.currentTurn.cards[0].number} de #{g.currentRound.currentTurn.cards[0].suit}
+    h3 carta 2: #{g.currentRound.currentTurn.cards[1].number} de #{g.currentRound.currentTurn.cards[1].suit}
+    h3 carta 3: #{g.currentRound.currentTurn.cards[2].number} de #{g.currentRound.currentTurn.cards[2].suit}
+    h3 Puntos : #{g.currentRound.currentTurn.pointsenv}
     lead elija que jugar
     br
     - p = "nada"
@@ -30,10 +25,10 @@ block content
           if g.currentRound.fsm.can('no-quiero')
             input.form-control(type="submit", name="jugada", value='no-quiero')
           if g.currentRound.fsm.can('play card')
-            if ((g.currentRound.isTurn()).handscards[0] != null)
+            if  (g.currentRound.currentTurn.cards[0]!== null)
               input.form-control(type="submit", name="jugada", value='play card1')
-            if ((g.currentRound.isTurn()).handscards[1] != null)
+            if  (g.currentRound.currentTurn.cards[0]!== null) 
               input.form-control(type="submit", name="jugada", value='play card2')
-            if ((g.currentRound.isTurn()).handscards[2] != null)
+            if  (g.currentRound.currentTurn.cards[0]!== null)  
               input.form-control(type="submit", name="jugada", value='play card3')
       &nbsp;
