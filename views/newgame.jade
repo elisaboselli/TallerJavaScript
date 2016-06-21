@@ -2,6 +2,8 @@ extends layout
 
 block content
   .container
+    if(mensaje)
+      h1 #{mensaje}
     h1 Nuevo Juego
     br
     form(role='form', action="/newgame",method="post", style='max-width: 300px;')

@@ -1,18 +1,16 @@
 body {
-    background-image: url("./images/fondo2.jpg");
+    background-image: url("./images/mesa.jpg");
     background-size: cover;
 }
 
 h1 {
     color: #ffffff;
     text-align: center;
-    /*font-size: 100px;*/
     font:300% sans-serif;
 }
 
 h2{
 	color: #ffffff;
-	/*font-size: 25px;*/
 	text-decoration: underline;
 	font:150% sans-serif;
 }
@@ -28,6 +26,13 @@ h4{
 	color:#ffffff;
 }
 
+h5{
+	color: #ffffff;
+	text-decoration: underline;
+	font:150% sans-serif;
+	text-align: center;
+}
+
 p {
     font-size: 20px;
     color:#ffffff;
@@ -40,7 +45,7 @@ p {
 	padding:10px 25px;
 	text-align: center;
 	font-size: 16px;
-	margin: 5px;
+	margin: 13px;
 }
 
 .field{
@@ -53,19 +58,22 @@ p {
 }
 
 .img{
-	margin:5px;
+	margin-left:13px;
 }
 
 #contenedor {
-  width: 700px;
+  width: 1000px;
 }
 
 #left {
   float: left;
-  width: 400px;
+  width: 350px;
+  background-image: url("./images/paño.jpg");
+  margin-left: 30px;
 }
 
 #right {
   float: left;
-  width: 300px;
+  width: 500px;
+  margin-left: 50px;
 }

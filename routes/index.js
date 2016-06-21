@@ -51,11 +51,11 @@ router.get('/logout', function(req, res) {
 router.get('/newgame',function(req,res){
     res.render('newgame');
 });
+
 /*POST newgame page*/
 router.post('/newgame', function(req,res){
     if (req.body.Player1 === req.body.Player2){
-        //res.redirect('/errorNewGame');
-        res.redirect('/');
+        res.redirect('/newgame');
     }
     else{
         var g = new Game ({player1 : req.body.Player1 , player2 : req.body.Player2 , score: [0,0], currentHand: req.body.Player2, fin:req.body.cantidad});
@@ -67,6 +67,8 @@ router.post('/newgame', function(req,res){
         });
     }
 });
+
+
 /*GET play page*/
 router.get('/play', function(req,res){
     Game.findOne({_id:req.query.gameid},function(err,game){
