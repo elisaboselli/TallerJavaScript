@@ -6,7 +6,7 @@ var mongoose = require("mongoose");
 
 var gameSchema = mongoose.Schema({
   //Game name
-  name : String,
+  //name : String,
   //Player name
   player1: String,
   //player name

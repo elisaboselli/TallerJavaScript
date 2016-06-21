@@ -1,36 +1,53 @@
 extends layout
 block content
   .container
-    h1 Jugar Ronda
-    h2 Puntuacion ronda #{g.currentRound.score}
-    h2 Juega #{g.currentRound.currentTurn}
-    h3 estado: #{g.currentRound.fsm.current}
-    h3 Cartas
-    if ((g.currentRound.isTurn()).handscards[0] != null)
-      img(src=c1)
-    if ((g.currentRound.isTurn()).handscards[1] != null)
-      img(src=c2)
-    if ((g.currentRound.isTurn()).handscards[2] != null)
-      img(src=c3)
-    h3 Puntos : #{g.currentRound.isTurn().pointsenv}
-    lead elija que jugar
-    br
-    form(role='form', action="/play",method="post", style='max-width: 300px;')
-      .form-group
-          input.form-control(type="hidden", name='gameid', value='#{g._id}')
-          if (g.currentRound.fsm.can('truco') && (g.currentRound.scoretruco < 2))
-            input.form-control(type="submit", name="jugada", value='truco')
-          if g.currentRound.fsm.can('envido')
-            input.form-control(type="submit", name="jugada", value='envido')
-          if g.currentRound.fsm.can('quiero')
-            input.form-control(type="submit", name="jugada", value='quiero')
-          if g.currentRound.fsm.can('no-quiero')
-            input.form-control(type="submit", name="jugada", value='no-quiero')
-          if g.currentRound.fsm.can('play card')
-            if ((g.currentRound.isTurn()).handscards[0] != null)
-              input.form-control(type="submit", name="jugada", value='play card1')
-            if ((g.currentRound.isTurn()).handscards[1] != null)
-              input.form-control(type="submit", name="jugada", value='play card2')
-            if ((g.currentRound.isTurn()).handscards[2] != null)
-              input.form-control(type="submit", name="jugada", value='play card3')
-      &nbsp;
+    div(id="contenedor")
+      div(id="left")
+        h1 Jugar Ronda
+        if (g.currentRound.currentTurn === g.player1)
+          h2 Cartas jugadas de #{g.player2}
+          each val in cp2
+            img.img(src=val)
+          br
+          h2 Cartas jugadas de #{g.player1}
+          each val in cp1
+            img.img(src=val)
+        else
+          h2 Cartas jugadas de #{g.player1}
+          each val in cp1
+            img.img(src=val)
+          br
+          h2 Cartas jugadas de #{g.player2}
+          each val in cp2
+            img.img(src=val)
+
+      div(id="right")
+        h3 Juega #{g.currentRound.currentTurn}
+        h2 Puntuación  
+        h3 #{g.player1}: #{g.score[0] + g.currentRound.score[0]} | #{g.player2}: #{g.score[1] + g.currentRound.score[1]}
+        if (ps==='envido' || ps==='truco')
+          h3 ¡Te cantaron #{ps}!
+        if (ps==='quiero' || ps==='no-quiero')
+          h3 ¡Te respondieron #{ps}!
+        h3 Tus puntos son: #{g.currentRound.isTurn().pointsenv}
+        h3 Elija que jugar
+        br
+        form(role='form', action="/play",method="post", style='max-width: 400px;')
+          .form-group
+            input.form-control(type="hidden", name='gameid', value='#{g._id}')
+            if g.currentRound.fsm.can('play card')
+              if ((g.currentRound.isTurn()).handscards[0] != null)
+                input.img(type="image", src=c1, name="jugada", value='jugar carta 1')
+              if ((g.currentRound.isTurn()).handscards[1] != null)
+                input.img(type="image", src=c2, name="jugada", value='jugar carta 2')
+              if ((g.currentRound.isTurn()).handscards[2] != null)
+                input.img(type="image", src=c3, name="jugada", value='jugar carta 3')
+            br
+            if (g.currentRound.fsm.can('truco') && (g.currentRound.scoretruco < 2))
+              input.button1(type="submit", name="jugada", value='truco')
+            if g.currentRound.fsm.can('envido')
+              input.button1(type="submit", name="jugada", value='envido')
+            if g.currentRound.fsm.can('quiero')
+              input.button1(type="submit", name="jugada", value='quiero')
+            if g.currentRound.fsm.can('no-quiero')
+              input.button1(type="submit", name="jugada", value='no-quiero')

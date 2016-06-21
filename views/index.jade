@@ -3,13 +3,17 @@ extends layout
 block content
   .container
     if (!user)
-      a(href="/login") Login
+      h1 ¡¡Bienvenido a Truco Argenino Online!!
+      a(href="/login")
+        button.button1(type="button") Ingresar
       br
-      a(href="/register") Register
+      a(href="/register") 
+        button.button1(type="button") Registrarse
     if (user)
-      p You are currently logged in as #{user.username}
+      h1 Esta actualmente conectado como #{user.username}
       br
       a(href="/newgame")
-        button.btn.btn-primary(type="button") New Game
+        button.button1(type="button") Nuevo Juego
       br
-      a(href="/logout") Logout
+      a(href="/logout") 
+        button.button1(type="button") Salir

@@ -19,8 +19,8 @@ function newTrucoFSM(estadoinit){
   events: [
     { name: 'play card', from: 'init',                           to: 'primer carta' },
     { name: 'envido',    from: ['init', 'primer carta'],         to: 'envido' },
-    { name: 'truco',     from: ['init', 'played card',
-    								   'primer carta'],          to: 'truco'  },
+    { name: 'truco',     from: ['init', 'played card','quiero','no-quiero',
+    									'primer carta'],          to: 'truco'  },
     { name: 'play card', from: ['quiero', 'no-quiero',
                                 'primer carta', 'played card'],  to: 'played card' },
     { name: 'quiero',    from: ['envido', 'truco'],              to: 'quiero'  },

@@ -1,13 +1,15 @@
 doctype html
 html
   head
-    title='Truco Argentino Online'
-    meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    link(href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css', rel='stylesheet', media='screen')
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    link(rel='shortcut icon', href='./images/favicon.ico', type='image/x-icon')
+    style
+      include style.css
+      title='Truco Argentino Online'
+      meta(name='viewport', content='width=device-width, initial-scale=1.0')
+      link(href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css', rel='stylesheet', media='screen')
+      link(rel='stylesheet', href='/stylesheets/style.css')
+      link(rel='shortcut icon', href='./images/favicon.ico', type='image/x-icon')
   body
-    img(src='./images/truco.jpg')
+    img(src='./images/truco3.png', style='float:right;')
     block content
 
   script(src='http://code.jquery.com/jquery.js')

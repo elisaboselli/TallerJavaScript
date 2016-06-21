@@ -3,9 +3,13 @@ extends layout
 block content
   .container
     h1 Resultado del juego
-    h2 Player 1 = #{g.score[0]}
-    h2 Player 2 = #{g.score[1]}
+    h3 #{g.player1} = #{g.score[0]}
+    h3 #{g.player2} = #{g.score[1]}
+    if (g.score[0]>g.score[1])
+      h3 ¡Felicidades #{g.player1}! ¡Ganaste el juego!
+    else
+      h3 ¡Felicidades #{g.player2}! ¡Ganaste el juego!
     a(href='/')
-      button.btn.btn-primary(type="button") Inicio
+      button.button1(type="button") Inicio
 
 

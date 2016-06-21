@@ -53,13 +53,19 @@ router.get('/newgame',function(req,res){
 });
 /*POST newgame page*/
 router.post('/newgame', function(req,res){
-    var g = new Game ({name : req.body.GameName, player1 : req.body.Player1 , player2 : req.body.Player2 , score: [0,0], currentHand: req.body.Player2, fin:req.body.cantidad});
-    g.save(function (err, game){;
-        if(err){
-            console.log(err);
-        }
-        res.redirect('/play?gameid=' + game._id);
-    });
+    if (req.body.Player1 === req.body.Player2){
+        //res.redirect('/errorNewGame');
+        res.redirect('/');
+    }
+    else{
+        var g = new Game ({player1 : req.body.Player1 , player2 : req.body.Player2 , score: [0,0], currentHand: req.body.Player2, fin:req.body.cantidad});
+        g.save(function (err, game){;
+            if(err){
+                console.log(err);
+            }
+            res.redirect('/play?gameid=' + game._id);
+        });
+    }
 });
 /*GET play page*/
 router.get('/play', function(req,res){
@@ -83,7 +89,18 @@ router.get('/play', function(req,res){
             var c2 = './images/cards/'+(turn.handscards[1].number)+(turn.handscards[1].suit)+'.jpg';
         if (turn.handscards[2]!==null)
             var c3 = './images/cards/'+(turn.handscards[2].number)+(turn.handscards[2].suit)+'.jpg';
-        res.render('play', {g : game, c1 : c1, c2 : c2, c3 : c3});
+        var s = game.currentRound.fsm.current;
+        var cp1 = [];
+        for (i=0; i<game.currentRound.player1.playedcards.length; i++){
+            cp1.push('./images/cards/'+(game.currentRound.player1.playedcards[i].number)+(game.currentRound.player1.playedcards[i].suit)+'.jpg');
+        }
+        var cp2 = [];
+        for (i=0; i<game.currentRound.player2.playedcards.length; i++){
+            cp2[i]='./images/cards/'+(game.currentRound.player2.playedcards[i].number)+(game.currentRound.player2.playedcards[i].suit)+'.jpg';
+        }
+        console.log('eli: '+cp1);
+        console.log('leo: '+cp2);
+        res.render('play', {g : game, c1 : c1, c2 : c2, c3 : c3, ps : s, cp1 : cp1, cp2 : cp2});
     });
 });
 
@@ -95,38 +112,40 @@ router.post('/play', function(req,res){
         r.__proto__ = Round.prototype;
         r.actState(r.fsm.current);
         //game.currentRound=r;
-        if (req.body.jugada !== 'play card1' && req.body.jugada !== 'play card2' && req.body.jugada !== 'play card3'){
+        if (req.body.jugada !== 'jugar carta 1' && req.body.jugada !== 'jugar carta 2' && req.body.jugada !== 'jugar carta 3'){
             game.play(req.body.jugada);
         }
-        if (req.body.jugada == 'play card1'){
+        if (req.body.jugada == 'jugar carta 1'){
             game.play('play card',0);   
         }
-        if (req.body.jugada == 'play card2'){
+        if (req.body.jugada == 'jugar carta 2'){
             game.play('play card',1);   
         }
-        if (req.body.jugada == 'play card3'){
+        if (req.body.jugada == 'jugar carta 3'){
             game.play('play card',2);   
         }
-        if(r.fsm.current=='fin') {
-            game.score[0] += r.score[0];
-            game.score[1] += r.score[1];
-            Game.update({ _id: game._id }, { $set :{score : game.score ,currentRound:r}},function (err,result){    
-                if (game.win()){
-                    res.redirect('/resultadogame?gameid=' + game._id);
-                }
-                else{
-                    res.redirect('/resultadoround?gameid=' + game._id);
-                }
-            });
+        game.score[0] += r.score[0];
+        game.score[1] += r.score[1];    
+        if (game.win()){
+            Game.update({ _id: game._id }, { $set :{score : game.score ,currentRound:r}},function (err,result){
+            res.redirect ('/resultadogame?gameid=' + game._id);
+        });
         }
         else{
-            Game.update({ _id: game._id }, { $set :{currentRound : r }},function (err,result){
-                if(err){
-                    console.log(err);
-                }
-                res.redirect('/play?gameid=' + game._id);
-            });
-        }
+            if(r.fsm.current=='fin') {
+                Game.update({ _id: game._id }, { $set :{score : game.score ,currentRound:r}},function (err,result){    
+                res.redirect('/resultadoround?gameid=' + game._id);
+                });
+            }
+            else{
+                Game.update({ _id: game._id }, { $set :{currentRound : r }},function (err,result){
+                    if(err){
+                        console.log(err);
+                    }
+                    res.redirect('/play?gameid=' + game._id);
+                });
+            }
+        };
     });
 });
 
