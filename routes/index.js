@@ -93,12 +93,28 @@ router.get('/play', function(req,res){
             var c3 = './images/cards/'+(turn.handscards[2].number)+(turn.handscards[2].suit)+'.jpg';
         var s = game.currentRound.fsm.current;
         var cp1 = [];
-        for (i=0; i<game.currentRound.player1.playedcards.length; i++){
+        /*for (i=0; i<game.currentRound.player1.playedcards.length; i++){
             cp1.push('./images/cards/'+(game.currentRound.player1.playedcards[i].number)+(game.currentRound.player1.playedcards[i].suit)+'.jpg');
+        }*/
+        for (i=0; i<3; i++){
+            if (game.currentRound.player1.playedcards[i]==null){
+                cp1.push('./images/dorso.jpg');
+            }
+            else{
+                cp1.push('./images/cards/'+(game.currentRound.player1.playedcards[i].number)+(game.currentRound.player1.playedcards[i].suit)+'.jpg');
+                }
         }
         var cp2 = [];
-        for (i=0; i<game.currentRound.player2.playedcards.length; i++){
+        /*for (i=0; i<game.currentRound.player2.playedcards.length; i++){
             cp2[i]='./images/cards/'+(game.currentRound.player2.playedcards[i].number)+(game.currentRound.player2.playedcards[i].suit)+'.jpg';
+        }*/
+        for (i=0; i<3; i++){
+            if (game.currentRound.player2.playedcards[i]==null){
+                cp2.push('./images/dorso.jpg');
+            }
+            else{
+                cp2.push('./images/cards/'+(game.currentRound.player2.playedcards[i].number)+(game.currentRound.player2.playedcards[i].suit)+'.jpg');
+                }
         }
         console.log('eli: '+cp1);
         console.log('leo: '+cp2);
