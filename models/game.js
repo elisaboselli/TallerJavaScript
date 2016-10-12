@@ -18,7 +18,9 @@ var gameSchema = mongoose.Schema({
   //Score of the game
   score : Array,
   //Points to win
-  fin : Number 
+  fin : Number, 
+  //state of the game
+  state : String 
 });
 var Game=mongoose.model('Game',gameSchema);
 
@@ -40,6 +42,7 @@ Game.prototype.play = function(action, value){
 Game.prototype.win = function(){
   if (this.score[0]>=this.fin || this.score[1]>=this.fin){
     return true;
+    this.state = "finished";
   }
   return false;
 };

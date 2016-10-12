@@ -58,7 +58,7 @@ router.post('/newgame', function(req,res){
         res.redirect('/newgame');
     }
     else{
-        var g = new Game ({player1 : req.body.Player1 , player2 : req.body.Player2 , score: [0,0], currentHand: req.body.Player2, fin:req.body.cantidad});
+        var g = new Game ({player1 : req.user.username , score: [0,0], fin:req.body.cantidad}, state: "Unstarted");
         g.save(function (err, game){;
             if(err){
                 console.log(err);
