@@ -67,13 +67,24 @@ router.post('/newgame', function(req,res){
         });
     }
 });
-/*
+
 router.get('/games',function(req,res){
     Game.find({state:"Unstarted"},function(err,games){
+        if (err){
+            console.log(err);
+        }
+        res.render('games', {games : games});
 
     }
-});*/
+});
 
+router.post('/games',function(req,res){
+    Game.findOne({_id:req.query.gameid},function(err,game){           
+        Game.update({ _id: req.game.id }, { $set :{ player2 : req.session.passport.user ,currentHand : req.session.passport.user}},function (err,result){
+            res.redirect ('/play?gameid=', req.gameid);
+        });
+    });
+});
 
 /*GET play page*/
 router.get('/play', function(req,res){
@@ -209,13 +220,18 @@ router.get('/resultadoround', function(req,res){
 /*POST resultadoround page*/
 router.post('/resultadoround', function(req,res){
     Game.findOne({_id:req.body.gameid}, function(err,game){
-        game.newRound();
-        Game.update({ _id: game._id }, { $set :{currentRound : game.currentRound , currentHand : game.currentHand }},function (err,result){
-            if(err){    
-                console.log(err);
-            }
+        if game.currentRound.fsm.current=='fin'{
+            game.newRound();
+            Game.update({ _id: game._id }, { $set :{currentRound : game.currentRound , currentHand : game.currentHand }},function (err,result){
+                if(err){    
+                    console.log(err);
+                }
+                res.redirect('/play?gameid=' + game._id);
+            });
+        }
+        else{
             res.redirect('/play?gameid=' + game._id);
-        });
+        }
     });
 });
 
