@@ -1,0 +1,10 @@
+extends layout
+
+block content
+	.conteiner
+		h1 Unirse a un Juego 
+		each val in games
+			h4 Jugar contra #{val.player1.name} a #{val.fin} puntos.
+			input.button1(type="submit", name="Jugar", value=val._id)
+			br
+		br
