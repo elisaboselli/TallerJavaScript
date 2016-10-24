@@ -58,7 +58,7 @@ router.post('/newgame', function(req,res){
         res.redirect('/newgame');
     }
     else{
-        var g = new Game ({player1 : req.user.username , score: [0,0], fin:req.body.cantidad}, state: "Unstarted");
+        var g = new Game ({player1 : req.session.passport.user, score: [0,0], fin:req.body.cantidad}, state: "Unstarted");
         g.save(function (err, game){;
             if(err){
                 console.log(err);
@@ -67,6 +67,12 @@ router.post('/newgame', function(req,res){
         });
     }
 });
+/*
+router.get('/games',function(req,res){
+    Game.find({state:"Unstarted"},function(err,games){
+
+    }
+});*/
 
 
 /*GET play page*/
@@ -83,42 +89,50 @@ router.get('/play', function(req,res){
         }
         var r = game.currentRound;
         r.__proto__ = Round.prototype;
-        r.actState(r.fsm.current);
-        var turn=(game.currentRound.isTurn());
+        /*var turn=(game.currentRound.isTurn());
         if (turn.handscards[0]!==null)
             var c1 = './images/cards/'+(turn.handscards[0].number)+(turn.handscards[0].suit)+'.jpg';
         if (turn.handscards[1]!==null)
             var c2 = './images/cards/'+(turn.handscards[1].number)+(turn.handscards[1].suit)+'.jpg';
         if (turn.handscards[2]!==null)
-            var c3 = './images/cards/'+(turn.handscards[2].number)+(turn.handscards[2].suit)+'.jpg';
+            var c3 = './images/cards/'+(turn.handscards[2].number)+(turn.handscards[2].suit)+'.jpg';*/
+        var user;
+        var rival;
+        if (req.session.passport.user===game.player1.name){
+            user=r.player1;
+            rival=r.player2;
+        }
+        else{
+            user=r.player2;
+            rival=r.player1;
+        }
+        if (user.handscards[0]!==null)
+            var c1 = './images/cards/'+(user.handscards[0].number)+(user.handscards[0].suit)+'.jpg';
+        if (user.handscards[1]!==null)
+            var c2 = './images/cards/'+(user.handscards[1].number)+(user.handscards[1].suit)+'.jpg';
+        if (user.handscards[2]!==null)
+            var c3 = './images/cards/'+(user.handscards[2].number)+(user.handscards[2].suit)+'.jpg';
         var s = game.currentRound.fsm.current;
-        var cp1 = [];
-        /*for (i=0; i<game.currentRound.player1.playedcards.length; i++){
-            cp1.push('./images/cards/'+(game.currentRound.player1.playedcards[i].number)+(game.currentRound.player1.playedcards[i].suit)+'.jpg');
-        }*/
+        var uc = [];
         for (i=0; i<3; i++){
-            if (game.currentRound.player1.playedcards[i]==null){
-                cp1.push('./images/dorso.jpg');
+            if (user.playedcards[i]==null){
+                uc.push('./images/dorso.jpg');
             }
             else{
-                cp1.push('./images/cards/'+(game.currentRound.player1.playedcards[i].number)+(game.currentRound.player1.playedcards[i].suit)+'.jpg');
+                uc.push('./images/cards/'+(user.playedcards[i].number)+(user.playedcards[i].suit)+'.jpg');
                 }
         }
-        var cp2 = [];
-        /*for (i=0; i<game.currentRound.player2.playedcards.length; i++){
-            cp2[i]='./images/cards/'+(game.currentRound.player2.playedcards[i].number)+(game.currentRound.player2.playedcards[i].suit)+'.jpg';
-        }*/
+        var rc = [];
         for (i=0; i<3; i++){
-            if (game.currentRound.player2.playedcards[i]==null){
-                cp2.push('./images/dorso.jpg');
+            if (rival.playedcards[i]==null){
+                rc.push('./images/dorso.jpg');
             }
             else{
-                cp2.push('./images/cards/'+(game.currentRound.player2.playedcards[i].number)+(game.currentRound.player2.playedcards[i].suit)+'.jpg');
+                rc.push('./images/cards/'+(rival.playedcards[i].number)+(rival.playedcards[i].suit)+'.jpg');
                 }
         }
-        console.log('eli: '+cp1);
-        console.log('leo: '+cp2);
-        res.render('play', {g : game, c1 : c1, c2 : c2, c3 : c3, ps : s, cp1 : cp1, cp2 : cp2});
+        var turn = user === r.isTurn();
+        res.render('play', {g : game, c1 : c1, c2 : c2, c3 : c3, ps : s, uc : uc, rc : rc, turn:turn, user : user, rival : rival});
     });
 });
 
