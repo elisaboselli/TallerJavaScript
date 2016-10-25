@@ -54,71 +54,83 @@ router.get('/newgame',function(req,res){
 
 /*POST newgame page*/
 router.post('/newgame', function(req,res){
-    if (req.body.Player1 === req.body.Player2){
-        res.redirect('/newgame');
-    }
-    else{
-        var g = new Game ({player1 : req.body.Player1 , player2 : req.body.Player2 , score: [0,0], currentHand: req.body.Player2, fin:req.body.cantidad});
-        g.save(function (err, game){;
-            if(err){
-                console.log(err);
-            }
-            res.redirect('/play?gameid=' + game._id);
-        });
-    }
+    var g = new Game ({player1 : req.session.passport.user, score: [0,0], fin:req.body.cantidad, state: "Unstarted"});
+    g.save(function (err, game){;
+        if(err){
+            console.log(err);
+        }
+        res.redirect('/play?gameid=' + game._id);
+    });
 });
 
+router.get('/games',function(req,res){
+    Game.find({state:"Unstarted"},function(err,games){
+        if (err){
+            console.log(err);
+        }
+        res.render('games', {games : games});
+    });
+});
+
+router.post('/games',function(req,res){
+    Game.findOne({_id:req.body.gameid},function(err,game){
+        game.player2=req.session.passport.user;
+        game.newRound();
+        Game.update({ _id: req.body.gameid }, { $set :{ player2 : game.player2 ,currentHand : game.currentHand, currentRound : game.currentRound, state : "Started" }},function (err,result){
+            res.redirect ('/play?gameid='+ req.body.gameid);
+        });
+    });
+});
 
 /*GET play page*/
 router.get('/play', function(req,res){
     Game.findOne({_id:req.query.gameid},function(err,game){
+        console.log(game.currentHand);
         if (game.currentRound == undefined){
-            game.newRound();
-            game.save(function(err,game2){
-                if (err){
-                    console.log(err);
-                }
-                res.render('play', {g : game2});
-            });
+            res.render('play', {g : game});
         }
-        var r = game.currentRound;
-        r.__proto__ = Round.prototype;
-        r.actState(r.fsm.current);
-        var turn=(game.currentRound.isTurn());
-        if (turn.handscards[0]!==null)
-            var c1 = './images/cards/'+(turn.handscards[0].number)+(turn.handscards[0].suit)+'.jpg';
-        if (turn.handscards[1]!==null)
-            var c2 = './images/cards/'+(turn.handscards[1].number)+(turn.handscards[1].suit)+'.jpg';
-        if (turn.handscards[2]!==null)
-            var c3 = './images/cards/'+(turn.handscards[2].number)+(turn.handscards[2].suit)+'.jpg';
-        var s = game.currentRound.fsm.current;
-        var cp1 = [];
-        /*for (i=0; i<game.currentRound.player1.playedcards.length; i++){
-            cp1.push('./images/cards/'+(game.currentRound.player1.playedcards[i].number)+(game.currentRound.player1.playedcards[i].suit)+'.jpg');
-        }*/
-        for (i=0; i<3; i++){
-            if (game.currentRound.player1.playedcards[i]==null){
-                cp1.push('./images/dorso.jpg');
+        else{
+            var r = game.currentRound;
+            r.__proto__ = Round.prototype;
+            r.actState(r.fsm.current);
+            var user;
+            var rival;
+            if (req.session.passport.user===game.player1){
+                user=r.player1;
+                rival=r.player2;
             }
             else{
-                cp1.push('./images/cards/'+(game.currentRound.player1.playedcards[i].number)+(game.currentRound.player1.playedcards[i].suit)+'.jpg');
-                }
-        }
-        var cp2 = [];
-        /*for (i=0; i<game.currentRound.player2.playedcards.length; i++){
-            cp2[i]='./images/cards/'+(game.currentRound.player2.playedcards[i].number)+(game.currentRound.player2.playedcards[i].suit)+'.jpg';
-        }*/
-        for (i=0; i<3; i++){
-            if (game.currentRound.player2.playedcards[i]==null){
-                cp2.push('./images/dorso.jpg');
+                user=r.player2;
+                rival=r.player1;
             }
-            else{
-                cp2.push('./images/cards/'+(game.currentRound.player2.playedcards[i].number)+(game.currentRound.player2.playedcards[i].suit)+'.jpg');
+            if (user.handscards[0]!==null)
+                var c1 = './images/cards/'+(user.handscards[0].number)+(user.handscards[0].suit)+'.jpg';
+            if (user.handscards[1]!==null)
+                var c2 = './images/cards/'+(user.handscards[1].number)+(user.handscards[1].suit)+'.jpg';
+            if (user.handscards[2]!==null)
+                var c3 = './images/cards/'+(user.handscards[2].number)+(user.handscards[2].suit)+'.jpg';
+            var s = game.currentRound.fsm.current;
+            var uc = [];
+            for (i=0; i<3; i++){
+                if (user.playedcards[i]==null){
+                    uc.push('./images/dorso.jpg');
                 }
+                else{
+                    uc.push('./images/cards/'+(user.playedcards[i].number)+(user.playedcards[i].suit)+'.jpg');
+                }
+            }
+            var rc = [];
+            for (i=0; i<3; i++){
+                if (rival.playedcards[i]==null){
+                    rc.push('./images/dorso.jpg');
+                }
+                else{
+                    rc.push('./images/cards/'+(rival.playedcards[i].number)+(rival.playedcards[i].suit)+'.jpg');
+                }
+            }
+            var turn = (user === r.isTurn());
+            res.render('play', {g : game, c1 : c1, c2 : c2, c3 : c3, ps : s, uc : uc, rc : rc, turn:turn, user : user, rival : rival});
         }
-        console.log('eli: '+cp1);
-        console.log('leo: '+cp2);
-        res.render('play', {g : game, c1 : c1, c2 : c2, c3 : c3, ps : s, cp1 : cp1, cp2 : cp2});
     });
 });
 
@@ -180,7 +192,7 @@ router.get('/resultadogame', function(req,res){
 /*POST resultadogame page*/
 router.post('/resultadogame', function(req,res){
         res.redirect('/');
-    });
+});
 
 /*GET resultadoround page*/
 router.get('/resultadoround', function(req,res){
@@ -195,15 +207,18 @@ router.get('/resultadoround', function(req,res){
 /*POST resultadoround page*/
 router.post('/resultadoround', function(req,res){
     Game.findOne({_id:req.body.gameid}, function(err,game){
-        game.newRound();
-        Game.update({ _id: game._id }, { $set :{currentRound : game.currentRound , currentHand : game.currentHand }},function (err,result){
-            if(err){    
-                console.log(err);
-            }
+        if (game.currentRound.fsm.current=='fin'){
+            game.newRound();
+            Game.update({ _id: game._id }, { $set :{currentRound : game.currentRound , currentHand : game.currentHand }},function (err,result){
+                if(err){    
+                    console.log(err);
+                }
+                res.redirect('/play?gameid=' + game._id);
+            });
+        }
+        else{
             res.redirect('/play?gameid=' + game._id);
-        });
+        }
     });
 });
-
-
 module.exports = router;
