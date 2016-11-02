@@ -7,6 +7,12 @@
 var app = require('../node_server');
 var debug = require('debug')('truco:server');
 var http = require('http');
+var User = require('../models/user');
+var Game = require("../models/game").game;
+var Player = require("../models/player").player;
+var Round = require("../models/round").round;
+var Card = require("../models/card").card;
+var StateMachine = require("../node_modules/javascript-state-machine/state-machine.js");
 
 /**
  * Get port from environment and store in Express.
@@ -29,6 +35,70 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+
+
+var io = require('socket.io')(server);
+
+
+
+io.on('connection', function(socket){
+  socket.on('join', function (room) {
+    console.log(socket.id);
+    socket.room=room
+    socket.join(room);
+    console.log(socket.room);
+    io.to(room).emit('sala');
+  });
+  socket.on('disconnect', function () {
+    socket.leave(socket.room);
+    console.log('A user disconnected');
+  });
+
+  socket.on ('jugada',function(jugada,gameid){
+    console.log('entro acaaa!!!')
+    console.log(gameid);
+    Game.findOne({_id:gameid}, function(err,game){
+      var r = game.currentRound;
+      r.__proto__ = Round.prototype;
+      r.actState(r.fsm.current);
+      if (jugada !== 'jugar-carta-1' && jugada !== 'jugar-carta-2' && jugada !== 'jugar-carta-3'){
+        game.play(jugada);
+      }
+      if (jugada == 'jugar-carta-1'){
+        game.play('play card',0);   
+      }
+      if (jugada == 'jugar-carta-2'){
+        game.play('play card',1);   
+      }
+      if (jugada == 'jugar-carta-3'){
+        game.play('play card',2);   
+      }
+      game.score[0] += r.score[0];
+      game.score[1] += r.score[1];    
+      if (game.win()){
+        Game.update({ _id: game._id }, { $set :{score : game.score ,currentRound:r}},function (err,result){
+          res.redirect ('/resultadogame?gameid=' + game._id);
+        });
+      }
+      else{
+        if(r.fsm.current=='fin') {
+          Game.update({ _id: game._id }, { $set :{score : game.score ,currentRound:r}},function (err,result){    
+            res.redirect('/resultadoround?gameid=' + game._id);
+          });
+        }
+        else{
+          Game.update({ _id: game._id }, { $set :{currentRound : r }},function (err,result){
+            if(err){
+              console.log(err);
+            }
+            //res.redirect('/play?gameid=' + game._id);
+            io.to(gameid).emit('jugar',socket.id);
+          });
+        }
+      };
+    });
+  });
+});
 /**
  * Normalize a port into a number, string, or false.
  */
