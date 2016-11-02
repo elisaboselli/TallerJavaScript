@@ -18,7 +18,6 @@ block content
             else
               img.img(src=val)
           br
-
         div(id="right")
           if (turn)
             h3 Juega #{user.name}
@@ -34,33 +33,34 @@ block content
           if (turn)
             h3 Elija que jugar
             br
-            form(role='form', action="/play",method="post", style='max-width: 400px;')
-              .form-group
-                input.form-control(type="hidden", name='gameid', value='#{g._id}')
+            div
                 if (user.handscards[0] != null)
                   if (g.currentRound.fsm.can('play card'))
-                    input.img(type="image", src=c1, name="jugada", value='jugar carta 1')
+                    input.img(type="image", src=c1, value='jugar carta 1', onclick='myFunction("jugar-carta-1")')
                   else
                     input.imgDis(type="image", src=c1, name="jugada", disabled="disabled")
                 if (user.handscards[1] != null) 
                   if (g.currentRound.fsm.can('play card'))
-                    input.img(type="image", src=c2, name="jugada", value='jugar carta 2')
+                    input.img(type="image", src=c2, value='jugar carta 2', onclick='myFunction("jugar-carta-2")')              
                   else
                     input.imgDis(type="image", src=c2, name="jugada", disabled="disabled")
                 if (user.handscards[2] != null) 
                   if (g.currentRound.fsm.can('play card'))
-                    input.img(type="image", src=c3, name="jugada", value='jugar carta 3')
+                    input.img(type="image", src=c3, value='jugar carta 3', onclick='myFunction("jugar-carta-3")')
+                    //input.img(type="image", src=c3, name="jugada", value='jugar carta 3',onclick='playing(jugar carta 3)')
+                    //input.imgDis(type="image", src=c3, name="jugada", disabled="disabled")
+                    //button.button1(onclick='myFunction("jugar-carta-3")') JUGAR CARTA 3
                   else
                     input.imgDis(type="image", src=c3, name="jugada", disabled="disabled")
                 br
                 if (g.currentRound.fsm.can('truco') && (g.currentRound.scoretruco < 2))
-                  input.button1(type="submit", name="jugada", value='truco')
+                  button.button1(onclick='myFunction("truco")') TRUCO
                 if g.currentRound.fsm.can('envido')
-                  input.button1(type="submit", name="jugada", value='envido')
+                  button.button1(onclick='myFunction("envido")') ENVIDO
                 if g.currentRound.fsm.can('quiero')
-                  input.button1(type="submit", name="jugada", value='quiero')
+                  button.button1(onclick='myFunction("quiero")') QUIERO
                 if g.currentRound.fsm.can('no-quiero')
-                  input.button1(type="submit", name="jugada", value='no-quiero')
+                  button.button1(onclick='myFunction("no-quiero")') NO QUIERO
           else
             h3 No es tu turno.
             h3 Esperando jugada de #{rival.name}.
@@ -71,3 +71,18 @@ block content
             if (user.handscards[2] != null) 
               input.imgDis(type="image", src=c3, name="jugada", disabled="disabled")
             br
+  script(src='https://cdn.socket.io/socket.io-1.2.0.js')
+  script(type='text/javascript').
+    var socket = io.connect('/');
+    socket.emit('join', '#{g._id}');
+    socket.on('jugar',function(){
+      location.reload();
+    });
+    socket.on('sala',function(){
+      //if (g.state==="Unstarted"){
+       // location.reload();
+      //}
+    });
+    function myFunction(jugada) {
+      socket.emit('jugada', jugada,'#{g._id}');
+    }  
