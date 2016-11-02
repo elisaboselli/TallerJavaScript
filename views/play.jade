@@ -42,17 +42,17 @@ block content
             div
                 if (user.handscards[0] != null)
                   if (g.currentRound.fsm.can('play card'))
-                    input.img(type="image", src=c1, value='jugar carta 1', onclick='myFunction("jugar-carta-1")')
+                    input.imgMesa(type="image", src=c1, value='jugar carta 1', onclick='myFunction("jugar-carta-1")')
                   else
                     input.imgDis(type="image", src=c1, name="jugada", disabled="disabled")
                 if (user.handscards[1] != null) 
                   if (g.currentRound.fsm.can('play card'))
-                    input.img(type="image", src=c2, value='jugar carta 2', onclick='myFunction("jugar-carta-2")')              
+                    input.imgMesa(type="image", src=c2, value='jugar carta 2', onclick='myFunction("jugar-carta-2")')              
                   else
                     input.imgDis(type="image", src=c2, name="jugada", disabled="disabled")
                 if (user.handscards[2] != null) 
                   if (g.currentRound.fsm.can('play card'))
-                    input.img(type="image", src=c3, value='jugar carta 3', onclick='myFunction("jugar-carta-3")')
+                    input.imgMesa(type="image", src=c3, value='jugar carta 3', onclick='myFunction("jugar-carta-3")')
                     //input.img(type="image", src=c3, name="jugada", value='jugar carta 3',onclick='playing(jugar carta 3)')
                     //input.imgDis(type="image", src=c3, name="jugada", disabled="disabled")
                     //button.button1(onclick='myFunction("jugar-carta-3")') JUGAR CARTA 3
