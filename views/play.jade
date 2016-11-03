@@ -25,10 +25,16 @@ block content
             h3 Juega #{rival.name}
           h2 Puntuación  
           h3 #{g.player1}: #{g.score[0] + g.currentRound.score[0]} | #{g.player2}: #{g.score[1] + g.currentRound.score[1]}
-          if (ps==='envido' || ps==='truco')
-            h3 ¡Te cantaron #{ps}!
-          if (ps==='quiero' || ps==='no-quiero')
-            h3 ¡Te respondieron #{ps}!
+          if (turn)
+            if (ps==='envido' || ps==='truco')
+              h3 ¡Te cantaron #{ps}!
+            if (ps==='quiero' || ps==='no-quiero')
+              h3 ¡Te respondieron #{ps}!
+          else
+            if (ps==='envido' || ps==='truco')
+              h3 Cantaste #{ps}
+            if (ps==='quiero' || ps==='no-quiero')
+              h3 Respondiste #{ps}
           h3 Tus puntos son: #{user.pointsenv}
           if (turn)
             h3 Elija que jugar
@@ -36,17 +42,17 @@ block content
             div
                 if (user.handscards[0] != null)
                   if (g.currentRound.fsm.can('play card'))
-                    input.img(type="image", src=c1, value='jugar carta 1', onclick='myFunction("jugar-carta-1")')
+                    input.imgMesa(type="image", src=c1, value='jugar carta 1', onclick='myFunction("jugar-carta-1")')
                   else
                     input.imgDis(type="image", src=c1, name="jugada", disabled="disabled")
                 if (user.handscards[1] != null) 
                   if (g.currentRound.fsm.can('play card'))
-                    input.img(type="image", src=c2, value='jugar carta 2', onclick='myFunction("jugar-carta-2")')              
+                    input.imgMesa(type="image", src=c2, value='jugar carta 2', onclick='myFunction("jugar-carta-2")')              
                   else
                     input.imgDis(type="image", src=c2, name="jugada", disabled="disabled")
                 if (user.handscards[2] != null) 
                   if (g.currentRound.fsm.can('play card'))
-                    input.img(type="image", src=c3, value='jugar carta 3', onclick='myFunction("jugar-carta-3")')
+                    input.imgMesa(type="image", src=c3, value='jugar carta 3', onclick='myFunction("jugar-carta-3")')
                   else
                     input.imgDis(type="image", src=c3, name="jugada", disabled="disabled")
                 br
