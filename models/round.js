@@ -25,7 +25,10 @@ function newTrucoFSM(estadoinit){
                                 'primer carta', 'played card'],  to: 'played card' },
     { name: 'quiero',    from: ['envido', 'truco'],              to: 'quiero'  },
     { name: 'no-quiero', from: ['envido', 'truco'],              to: 'no-quiero' },
-    { name: 'finalizar', from: ['no-quiero','played card'], 	 to: 'fin'},
+    { name: 'finalizar', from: ['no-quiero','played card'], 	 to: 'mostrar ronda'},
+    { name: 'proxima-ronda', from: ['mostrar ronda'], 	 to: 'fin'},
+    { name: 'finJuego', from: ['quiero', 'no-quiero', 'played card', 'mostrar ronda'], to:'fin juego'  }
+
   ]});
 
   return fsm;
@@ -153,10 +156,10 @@ Round.prototype.winner = function(){
 			if (this.manosganadas[0] === 0){
 				return this.isHand();
 			}
-			if (this.manosganadas[0]>0) {
+			if (this.manosganadas[0] > 0) {
 				return this.player1;		
 			}
-			if (this.manosganads[0]<0){
+			if (this.manosganadas[0] < 0){
 				return this.player2;
 			}
 		}

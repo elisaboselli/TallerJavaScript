@@ -47,9 +47,6 @@ block content
                 if (user.handscards[2] != null) 
                   if (g.currentRound.fsm.can('play card'))
                     input.img(type="image", src=c3, value='jugar carta 3', onclick='myFunction("jugar-carta-3")')
-                    //input.img(type="image", src=c3, name="jugada", value='jugar carta 3',onclick='playing(jugar carta 3)')
-                    //input.imgDis(type="image", src=c3, name="jugada", disabled="disabled")
-                    //button.button1(onclick='myFunction("jugar-carta-3")') JUGAR CARTA 3
                   else
                     input.imgDis(type="image", src=c3, name="jugada", disabled="disabled")
                 br
@@ -61,6 +58,9 @@ block content
                   button.button1(onclick='myFunction("quiero")') QUIERO
                 if g.currentRound.fsm.can('no-quiero')
                   button.button1(onclick='myFunction("no-quiero")') NO QUIERO
+                if (ps==='mostrar ronda')
+                  h1 ronda finalizada
+                  button.button1(onclick='myFunction("proxima-ronda")') PROXIMA RONDA
           else
             h3 No es tu turno.
             h3 Esperando jugada de #{rival.name}.
@@ -71,6 +71,12 @@ block content
             if (user.handscards[2] != null) 
               input.imgDis(type="image", src=c3, name="jugada", disabled="disabled")
             br
+            if (ps==='mostrar ronda')
+              h1 ronda finalizada esperando adversario
+          if (ps==='fin juego')
+            a(href="/")
+              button.button1(type="button") CONTINUAR
+  
   script(src='https://cdn.socket.io/socket.io-1.2.0.js')
   script(type='text/javascript').
     var socket = io.connect('/');
@@ -79,9 +85,9 @@ block content
       location.reload();
     });
     socket.on('sala',function(){
-      //if (g.state==="Unstarted"){
-       // location.reload();
-      //}
+      if ('#{g.state}'==="Unstarted"){
+        location.reload();
+      }
     });
     function myFunction(jugada) {
       socket.emit('jugada', jugada,'#{g._id}');
