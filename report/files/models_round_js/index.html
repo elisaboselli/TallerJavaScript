@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - models/round.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>models/round.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">59.13</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">256</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">75.48</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">2.58</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">var mongoose = require(&quot;mongoose&quot;);
+var deckModel = require(&quot;./deck.js&quot;);
+var gameModel = require(&quot;./game.js&quot;);
+var cardModel = require(&quot;./card.js&quot;);
+var playerModel = require(&quot;./player.js&quot;);
+var Deck = deckModel.deck;
+var Game = gameModel.game;
+var Card = cardModel.card;
+var Player = playerModel.player;
+
+var StateMachine = require(&quot;../node_modules/javascript-state-machine/state-machine.js&quot;);
+
+function newTrucoFSM(estadoinit){
+	if (estadoinit===undefined){
+		estadoinit = &#039;init&#039;; 
+	}
+  var fsm = StateMachine.create({
+  initial: estadoinit,
+  events: [
+    { name: &#039;play card&#039;, from: &#039;init&#039;,                           to: &#039;primer carta&#039; },
+    { name: &#039;envido&#039;,    from: [&#039;init&#039;, &#039;primer carta&#039;],         to: &#039;envido&#039; },
+    { name: &#039;truco&#039;,     from: [&#039;init&#039;, &#039;played card&#039;,
+    							  &#039;quiero&#039;,&#039;no-quiero&#039;,
+    								   &#039;primer carta&#039;],          to: &#039;truco&#039;  },
+    { name: &#039;play card&#039;, from: [&#039;quiero&#039;, &#039;no-quiero&#039;,
+                                &#039;primer carta&#039;, &#039;played card&#039;],  to: &#039;played card&#039; },
+    { name: &#039;quiero&#039;,    from: [&#039;envido&#039;, &#039;truco&#039;],              to: &#039;quiero&#039;  },
+    { name: &#039;no-quiero&#039;, from: [&#039;envido&#039;, &#039;truco&#039;],              to: &#039;no-quiero&#039; },
+    { name: &#039;finalizar&#039;, from: [&#039;no-quiero&#039;,&#039;played card&#039;], 	 to: &#039;fin&#039;},
+  ]});
+
+  return fsm;
+}
+function Round(game,turn){
+	//current turn
+	this.currentTurn = turn;
+	this.currentHand = this.currentTurn;
+	//deck mix
+	var d = new Deck().mix();
+	//cards player 1 &amp;&amp; cards player 2
+	this.player1= new Player(game.player1);
+	this.player2= new Player(game.player2);
+
+	this.player1.handscards = [d[0],d[2],d[4]];
+	this.player2.handscards = [d[1],d[3],d[5]];
+
+	//calculate envido points for players
+	this.player1.pointsenv = this.player1.getPoints();
+	this.player2.pointsenv = this.player2.getPoints();
+	//state machine 
+	this.fsm = newTrucoFSM();
+	//score truco
+	this.scoretruco=1;
+	this.estados=[];
+	//array of who won each hand
+	this.manosganadas=[];
+	this.score= [0,0];
+}
+
+Round.prototype.actState = function(estadoinit) {
+	this.fsm=newTrucoFSM(estadoinit);
+};
+//Devuelve el jugador que gana el envido (compara puntos)
+Round.prototype.confrontPoints = function(){
+	if(this.player1.pointsenv&gt;this.player2.pointsenv){
+		return this.player1;
+	}
+	if(this.player1.pointsenv&lt;this.player2.pointsenv){
+		return this.player2;
+	}
+	if(this.player1.pointsenv===this.player2.pointsenv){
+		return this.isHand();
+	}
+}
+
+//Cambia el turno
+Round.prototype.changeTurn = function(){
+	if (this.fsm.current ==&quot;played card&quot; &amp;&amp; (this.player1.playedcards.length === this.player2.playedcards.length)){
+		//En el estado carta jugada
+		var c1=(this.player1.playedcards[this.player1.playedcards.length - 1]);
+		var c2=(this.player2.playedcards[this.player2.playedcards.length - 1]);
+		var a = (c1.weight - c2.weight);
+		if (a&gt;0){
+			this.currentTurn=this.player1.name
+		}
+		if (a&lt;0){
+			this.currentTurn=this.player2.name
+		}
+		if (a===0){
+			this.switchTurn();
+		}
+	}
+	//Si no entra al if, cambia el turno
+	else{
+	this.switchTurn();
+	}
+}
+
+//Cambia el jugador
+Round.prototype.switchTurn = function (){
+  if (this.currentTurn === this.player1.name){
+  	this.currentTurn = this.player2.name;
+  }
+  else{
+  	this.currentTurn = this.player1.name;
+  }
+};
+//Ahora recive el numero de carta que hay que jugar de el jugador que tiene el turno (debe recibir 0,1 o 2)
+//Inserta una carta en la lista de cartas jugadas. Con manosganadas controlamos como va el juego.
+Round.prototype.insertCard = function (value){
+	if (this.currentTurn === this.player1.name){
+		this.player1.playedcards.push(this.player1.handscards[value]);
+		this.player1.handscards[value]=undefined;
+	}
+	else{
+		this.player2.playedcards.push(this.player2.handscards[value]);
+		this.player2.handscards[value]=undefined;
+	}
+	if (this.player1.playedcards.length === this.player2.playedcards.length){
+		var c1=(this.player1.playedcards[this.player1.playedcards.length - 1]);
+		var c2=(this.player2.playedcards[this.player2.playedcards.length - 1]);
+		var a = (c1.weight - c2.weight);
+		if (a&gt;0){
+			this.manosganadas.push(1);
+		}
+		if (a&lt;0){
+			this.manosganadas.push(-1);
+		}
+		if (a===0){
+			this.manosganadas.push(0);
+		}
+	}
+}
+
+
+//Controla si existe un ganador.
+Round.prototype.winner = function(){
+	if ((this.player1.playedcards.length === this.player2.playedcards.length) &amp;&amp; ((this.player1.playedcards.length===2) ||(this.player1.playedcards.length===3))){
+		//Si estamos en posicion de saber si hay un ganador (es decir si ya se jugaron al menos dos manos)
+		var sum=0;
+		for (var i = 0; i &lt; this.manosganadas.length; i++){
+			sum+=this.manosganadas[i];		
+		}
+		if (sum&gt;0){
+			//Si se sumo 2 veces 1 significa que player1 gano 2 manos por lo tanto es ganador
+			return this.player1;
+		}
+		if (sum&lt;0){
+			//Si se resto 2 veces 1 significa que player2 gano 2 manos por lo tanto es ganador
+			return this.player2;
+		}
+		if ((sum ===0) &amp;&amp; (this.manosganadas.length===3)){
+			//Si se jugaron las 6 cartas y se empataron todas, o bien ganaron una vez cada uno y empataron en el restante, se devuelve el jugador que es mano.
+			if (this.manosganadas[0] === 0){
+				return this.isHand();
+			}
+			if (this.manosganadas[0]&gt;0) {
+				return this.player1;		
+			}
+			if (this.manosganads[0]&lt;0){
+				return this.player2;
+			}
+		}
+	}
+	//Si todavia no se puede calcular un ganador se devuelve null
+	return null;
+}
+// devuelve el jugador que es mano
+Round.prototype.isHand = function(){
+	if (this.currentHand === this.player1.name) {
+		return this.player1;
+	}
+	return this.player2;
+}
+//devuelve el jugador que tiene el turno
+Round.prototype.isTurn = function(){
+	if (this.currentTurn === this.player1.name) {
+		return this.player1;
+	}
+	return this.player2;
+}
+
+//Calculamos puntajes
+Round.prototype.calculateScore = function(action){
+  	if(action == &quot;quiero&quot; || action == &quot;no-quiero&quot;){
+  		//Si se llego a una decision
+  		if (this.estados[this.estados.length-1] == &quot;envido&quot;){
+  			//Desde un envido
+    		if (action == &quot;quiero&quot;){
+    			//Y se quiso, le asignamos +2 puntos al ganador del envido.
+   	 			if (this.confrontPoints()=== this.player1){
+    				this.score[0] += 2;
+   			 	}
+    			if (this.confrontPoints()=== this.player2){
+    				this.score[1] += 2;
+   	 			}
+ 		   	}
+    		if (action==&quot;no-quiero&quot;){
+    			//Y no se quiso, le asignamos +1 punto al contrario del que tiene el turno (ya que el que tiene el turno dijo &quot;no quiero&quot;)
+    			if (this.player1.name === this.currentTurn){
+    				this.score[1] += 1; 
+   		 		}
+    			else{
+    				this.score[0] +=1;
+    			}
+
+   		 	} 
+   		}
+   		if (this.estados[this.estados.length-1]==&quot;truco&quot;){
+   			//En cambio si se llego desde un truco
+    		if (action==&quot;no-quiero&quot;){
+    			//Y no se quiso, le asignamos los puntos del truco al contrario del que tiene el turno (ya que el que tiene el turno dijo &quot;no quiero&quot;)
+    			if (this.player1.name === this.currentTurn){
+    				this.score[1] += this.scoretruco;
+   			 	}
+    			else{
+    				this.score[0] += this.scoretruco;
+    			}
+    			//Y finalizamos
+    			this.fsm.finalizar();
+    		}
+    		//Y si se quiso, aumentamos en 1 los puntos acumulados del truco y los dejamos en espera para ver quien gana la mano
+    		else {
+    			this.scoretruco += 1;
+    		}
+		}
+	}
+}
+
+//Juega1
+Round.prototype.play = function(action, value) {
+  //Cambiamos de estado
+  this.estados.push(this.fsm.current);
+  this.fsm[action]();
+  //Comprobamos puntajes
+  this.calculateScore(action);
+  if (action ==&quot;play card&quot;){
+  		//Si jugamos una carta la guardamos
+  		this.insertCard(value);
+  		if (this.winner ()!==null){
+  			//Y si hay un ganador le asigna los puntos a los correspondientes.
+  			if (this.winner()===this.player1){
+  				this.score[0]+=this.scoretruco;
+  			}
+  			else{;
+  				this.score[1]+=this.scoretruco;
+  			}
+  			//Por ultimo finalizamos.
+  			this.fsm.finalizar();
+  		}
+  }
+  //Y cambiamos el turno
+  return this.changeTurn();
+};
+
+module.exports.round = Round;</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ cyclomatic }} <br>
+    Length : {{ halstead.length }} <br>
+    Difficulty : {{ halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>
