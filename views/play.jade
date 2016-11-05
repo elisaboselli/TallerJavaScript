@@ -18,6 +18,7 @@ block content
             else
               img.img(src=val)
           br
+
         div(id="right")
           if (turn)
             h3 Juega #{user.name}
@@ -64,6 +65,9 @@ block content
                   button.button1(onclick='myFunction("quiero")') QUIERO
                 if g.currentRound.fsm.can('no-quiero')
                   button.button1(onclick='myFunction("no-quiero")') NO QUIERO
+                if g.currentRound.fsm.can('irse-al-mazo')
+                  button.button1(onclick='(myFunction("irse-al-mazo"))') IRSE AL MAZO
+
                 if (ps==='mostrar ronda')
                   h1 ronda finalizada
                   button.button1(onclick='myFunction("proxima-ronda")') PROXIMA RONDA

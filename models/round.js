@@ -12,7 +12,7 @@ var StateMachine = require("../node_modules/javascript-state-machine/state-machi
 
 function newTrucoFSM(estadoinit){
 	if (estadoinit===undefined){
-		estadoinit = 'init'; 
+		estadoinit = 'init';
 	}
   var fsm = StateMachine.create({
   initial: estadoinit,
@@ -25,7 +25,9 @@ function newTrucoFSM(estadoinit){
                                 'primer carta', 'played card'],  to: 'played card' },
     { name: 'quiero',    from: ['envido', 'truco'],              to: 'quiero'  },
     { name: 'no-quiero', from: ['envido', 'truco'],              to: 'no-quiero' },
-    { name: 'finalizar', from: ['no-quiero','played card'], 	 to: 'mostrar ronda'},
+		{ name: 'irse-al-mazo', from:['init','played card','quiero','no-quiero',
+    													'primer carta','envido','truco'],  to: 'mostrar ronda'},
+    { name: 'finalizar', from: ['no-quiero','played card','irse al mazo'], 	 to: 'mostrar ronda'},
     { name: 'proxima-ronda', from: ['mostrar ronda'], 	 to: 'fin'},
     { name: 'finJuego', from: ['quiero', 'no-quiero', 'played card', 'mostrar ronda'], to:'fin juego'  }
 
@@ -49,7 +51,7 @@ function Round(game,turn){
 	//calculate envido points for players
 	this.player1.pointsenv = this.player1.getPoints();
 	this.player2.pointsenv = this.player2.getPoints();
-	//state machine 
+	//state machine
 	this.fsm = newTrucoFSM();
 	//score truco
 	this.scoretruco=1;
@@ -141,7 +143,7 @@ Round.prototype.winner = function(){
 		//Si estamos en posicion de saber si hay un ganador (es decir si ya se jugaron al menos dos manos)
 		var sum=0;
 		for (var i = 0; i < this.manosganadas.length; i++){
-			sum+=this.manosganadas[i];		
+			sum+=this.manosganadas[i];
 		}
 		if (sum>0){
 			//Si se sumo 2 veces 1 significa que player1 gano 2 manos por lo tanto es ganador
@@ -157,7 +159,7 @@ Round.prototype.winner = function(){
 				return this.isHand();
 			}
 			if (this.manosganadas[0] > 0) {
-				return this.player1;		
+				return this.player1;
 			}
 			if (this.manosganadas[0] < 0){
 				return this.player2;
@@ -200,13 +202,13 @@ Round.prototype.calculateScore = function(action){
     		if (action=="no-quiero"){
     			//Y no se quiso, le asignamos +1 punto al contrario del que tiene el turno (ya que el que tiene el turno dijo "no quiero")
     			if (this.player1.name === this.currentTurn){
-    				this.score[1] += 1; 
+    				this.score[1] += 1;
    		 		}
     			else{
     				this.score[0] +=1;
     			}
 
-   		 	} 
+   		 	}
    		}
    		if (this.estados[this.estados.length-1]=="truco"){
    			//En cambio si se llego desde un truco
@@ -225,6 +227,26 @@ Round.prototype.calculateScore = function(action){
     		else {
     			this.scoretruco += 1;
     		}
+		}
+	}
+	if (action=='irse al mazo'){
+		if((this.estados.length == 1)||(this.estados[this.estados.length-1]=="envido")){
+			if (this.player1.name === this.currentTurn){
+					this.score[1] += 2;
+				}
+				else{
+					this.score[0] += 2;
+				}
+		}
+		else{
+			if (this.estados[this.estados.length-1]=="truco" || (this.estados[this.estados.length-2]=="truco")&&(this.estados[this.estados.length-1]=="quiero")){
+				if (this.player1.name === this.currentTurn){
+						this.score[1] += this.scoretruco;
+					}
+					else{
+						this.score[0] += this.scoretruco;
+					}
+				}
 		}
 	}
 }
