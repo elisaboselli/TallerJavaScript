@@ -3,10 +3,9 @@ extends layout
 block content
   .conteiner
     h1 Unirse a un Juego
-    form(role='form', action="/games",method="post", style='max-width: 400px;')
+    form(name="myform", role='form', action="/games",method="post", style='max-width: 400px;')
       .form-group 
         each val in games
-          h4 Jugar contra #{val.player1} a #{val.fin} puntos.
-          input.button1(type="submit", name="gameid", value='#{val._id}')
+          button.button1(type="submit", name="gameid", value='#{val._id}') Jugar contra #{val.player1} a #{val.fin} puntos.
           br
         br

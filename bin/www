@@ -7,6 +7,12 @@
 var app = require('../node_server');
 var debug = require('debug')('truco:server');
 var http = require('http');
+var User = require('../models/user');
+var Game = require("../models/game").game;
+var Player = require("../models/player").player;
+var Round = require("../models/round").round;
+var Card = require("../models/card").card;
+var StateMachine = require("../node_modules/javascript-state-machine/state-machine.js");
 
 /**
  * Get port from environment and store in Express.
@@ -29,6 +35,69 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+
+
+var io = require('socket.io')(server);
+
+
+
+io.on('connection', function(socket){
+  socket.on('join', function (room) {
+    socket.room=room
+    socket.join(room);
+    socket.broadcast.to(room).emit('sala');
+  });
+  socket.on('disconnect', function () {
+    socket.leave(socket.room);
+  });
+
+  socket.on ('jugada',function(jugada,gameid){
+    Game.findOne({_id:gameid}, function(err,game){
+      var r = game.currentRound;
+      r.__proto__ = Round.prototype;
+      r.actState(r.fsm.current);
+      if (jugada !== 'jugar-carta-1' && jugada !== 'jugar-carta-2' && jugada !== 'jugar-carta-3'){
+        game.play(jugada);
+      }
+      if (jugada == 'jugar-carta-1'){
+        game.play('play card',0);   
+      }
+      if (jugada == 'jugar-carta-2'){
+        game.play('play card',1);   
+      }
+      if (jugada == 'jugar-carta-3'){
+        game.play('play card',2);   
+      }
+      game.score[0] += r.score[0];
+      game.score[1] += r.score[1];    
+      if (game.win()){
+        r.fsm.finJuego();
+        Game.update({ _id: game._id }, { $set :{score : game.score ,currentRound:r}},function (err,result){
+          io.to(gameid).emit('jugar',socket.id);
+        });
+      }
+      else{
+        if(r.fsm.current=='fin') {
+            game.newRound();
+            Game.update({ _id: game._id }, { $set :{score: game.score , currentRound : game.currentRound , currentHand : game.currentHand }},function (err,result){
+                  if(err){    
+                      console.log(err);
+                  }
+                io.to(gameid).emit('jugar',socket.id);
+              });
+            }            
+        else{
+          Game.update({ _id: game._id }, { $set :{currentRound : r }},function (err,result){
+            if(err){
+              console.log(err);
+            }
+            io.to(gameid).emit('jugar',socket.id);
+          });
+        };
+      };
+    });
+  });
+});
 /**
  * Normalize a port into a number, string, or false.
  */

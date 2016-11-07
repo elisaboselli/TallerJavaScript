@@ -85,7 +85,6 @@ router.post('/games',function(req,res){
 /*GET play page*/
 router.get('/play', function(req,res){
     Game.findOne({_id:req.query.gameid},function(err,game){
-        console.log(game.currentHand);
         if (game.currentRound == undefined){
             res.render('play', {g : game});
         }
@@ -136,7 +135,7 @@ router.get('/play', function(req,res){
 
 
 /*POST play  page*/
-router.post('/play', function(req,res){
+/*router.post('/play', function(req,res){
     Game.findOne({_id:req.body.gameid}, function(err,game){
         var r = game.currentRound;
         r.__proto__ = Round.prototype;
@@ -177,7 +176,7 @@ router.post('/play', function(req,res){
             }
         };
     });
-});
+});*/
 
 /*GET resaltadogame page*/
 router.get('/resultadogame', function(req,res){

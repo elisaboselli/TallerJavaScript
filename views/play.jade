@@ -26,41 +26,51 @@ block content
             h3 Juega #{rival.name}
           h2 Puntuación  
           h3 #{g.player1}: #{g.score[0] + g.currentRound.score[0]} | #{g.player2}: #{g.score[1] + g.currentRound.score[1]}
-          if (ps==='envido' || ps==='truco')
-            h3 ¡Te cantaron #{ps}!
-          if (ps==='quiero' || ps==='no-quiero')
-            h3 ¡Te respondieron #{ps}!
+          if (turn)
+            if (ps==='envido' || ps==='truco')
+              h3 ¡Te cantaron #{ps}!
+            if (ps==='quiero' || ps==='no-quiero')
+              h3 ¡Te respondieron #{ps}!
+          else
+            if (ps==='envido' || ps==='truco')
+              h3 Cantaste #{ps}
+            if (ps==='quiero' || ps==='no-quiero')
+              h3 Respondiste #{ps}
           h3 Tus puntos son: #{user.pointsenv}
           if (turn)
             h3 Elija que jugar
             br
-            form(role='form', action="/play",method="post", style='max-width: 400px;')
-              .form-group
-                input.form-control(type="hidden", name='gameid', value='#{g._id}')
+            div
                 if (user.handscards[0] != null)
                   if (g.currentRound.fsm.can('play card'))
-                    input.img(type="image", src=c1, name="jugada", value='jugar carta 1')
+                    input.imgMesa(type="image", src=c1, value='jugar carta 1', onclick='myFunction("jugar-carta-1")')
                   else
                     input.imgDis(type="image", src=c1, name="jugada", disabled="disabled")
                 if (user.handscards[1] != null) 
                   if (g.currentRound.fsm.can('play card'))
-                    input.img(type="image", src=c2, name="jugada", value='jugar carta 2')
+                    input.imgMesa(type="image", src=c2, value='jugar carta 2', onclick='myFunction("jugar-carta-2")')              
                   else
                     input.imgDis(type="image", src=c2, name="jugada", disabled="disabled")
                 if (user.handscards[2] != null) 
                   if (g.currentRound.fsm.can('play card'))
-                    input.img(type="image", src=c3, name="jugada", value='jugar carta 3')
+                    input.imgMesa(type="image", src=c3, value='jugar carta 3', onclick='myFunction("jugar-carta-3")')
                   else
                     input.imgDis(type="image", src=c3, name="jugada", disabled="disabled")
                 br
                 if (g.currentRound.fsm.can('truco') && (g.currentRound.scoretruco < 2))
-                  input.button1(type="submit", name="jugada", value='truco')
+                  button.button1(onclick='myFunction("truco")') TRUCO
                 if g.currentRound.fsm.can('envido')
-                  input.button1(type="submit", name="jugada", value='envido')
+                  button.button1(onclick='myFunction("envido")') ENVIDO
                 if g.currentRound.fsm.can('quiero')
-                  input.button1(type="submit", name="jugada", value='quiero')
+                  button.button1(onclick='myFunction("quiero")') QUIERO
                 if g.currentRound.fsm.can('no-quiero')
-                  input.button1(type="submit", name="jugada", value='no-quiero')
+                  button.button1(onclick='myFunction("no-quiero")') NO QUIERO
+                if g.currentRound.fsm.can('irse-al-mazo')
+                  button.button1(onclick='(myFunction("irse-al-mazo"))') IRSE AL MAZO
+
+                if (ps==='mostrar ronda')
+                  h1 ronda finalizada
+                  button.button1(onclick='myFunction("proxima-ronda")') PROXIMA RONDA
           else
             h3 No es tu turno.
             h3 Esperando jugada de #{rival.name}.
@@ -71,3 +81,24 @@ block content
             if (user.handscards[2] != null) 
               input.imgDis(type="image", src=c3, name="jugada", disabled="disabled")
             br
+            if (ps==='mostrar ronda')
+              h1 ronda finalizada esperando adversario
+          if (ps==='fin juego')
+            a(href="/")
+              button.button1(type="button") CONTINUAR
+  
+  script(src='https://cdn.socket.io/socket.io-1.2.0.js')
+  script(type='text/javascript').
+    var socket = io.connect('/');
+    socket.emit('join', '#{g._id}');
+    socket.on('jugar',function(){
+      location.reload();
+    });
+    socket.on('sala',function(){
+      if ('#{g.state}'==="Unstarted"){
+        location.reload();
+      }
+    });
+    function myFunction(jugada) {
+      socket.emit('jugada', jugada,'#{g._id}');
+    }  

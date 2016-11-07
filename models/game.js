@@ -28,13 +28,17 @@ var Game=mongoose.model('Game',gameSchema);
 //Check if it's valid move and play and card played (if action = play card) in the current round
 Game.prototype.play = function(action, value){
   //Lo saque por que ahora los juegos solo los hace el turno corriente
-  /*if(this.currentRound.currentTurn !== player)
-    throw new Error("[ERROR] INVALID TURN...");*/
-  if(this.currentRound.fsm.cannot(action))
+  //if(this.currentRound.currentTurn !== player)
+  // throw new Error("[ERROR] INVALID TURN...");
+  console.log('play');
+  if(this.currentRound.fsm.cannot(action)){
+    console.log(action);
+    console.log(this.currentRound.fsm.current);
     throw new Error("[ERROR] INVALID MOVE...");
-  //tengo que arreglar esto xq ahora manda solamente un numero
+  }
   if (action=="play card" && value == undefined)
   	throw new Error("[ERROR] PLAYED CARD...");
+  console.log(value);
   return this.currentRound.play(action, value);
 };
 

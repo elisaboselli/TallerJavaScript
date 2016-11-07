@@ -1,12 +1,12 @@
 body {
-    background-image: url("./images/mesa.jpg");
-    background-size: cover;
+  background-image: url("./images/mesa.jpg");
+  background-size: cover;
 }
 
 h1 {
-    color: #ffffff;
-    text-align: center;
-    font:300% sans-serif;
+  color: #ffffff;
+  text-align: center;
+  font:300% sans-serif;
 }
 
 h2{
@@ -34,8 +34,8 @@ h5{
 }
 
 p {
-    font-size: 20px;
-    color:#ffffff;
+  font-size: 20px;
+  color:#ffffff;
 }
 
 .button1{
@@ -46,6 +46,14 @@ p {
 	text-align: center;
 	font-size: 16px;
 	margin: 13px;
+  border-radius: 8px;
+  box-shadow: 0px 5px #666;
+}
+
+.button1:active {
+  background-color: #696969;
+  color: white;
+  box-shadow: 0 5px #333333;
 }
 
 .field{
@@ -55,18 +63,34 @@ p {
 	text-align: center;
 	font-size: 16px;
 	margin: 3px;
+  border-radius: 8px;
 }
 
 .img{
 	margin-left:13px;
 	width: 100px;
 	height: 140px;
+  border-radius: 4px;
+}
+
+.imgMesa{
+  margin-left:13px;
+  width: 100px;
+  height: 140px;
+  border-radius: 4px;
+  box-shadow: 0px 5px #666;
+}
+
+.imgMesa:active{
+  opacity: 0.9;
+  box-shadow: 0 5px #333333;
 }
 
 .imgDis{
 	margin-left:13px;
 	opacity: 0.6;
-        cursor: not-allowed;
+  cursor: not-allowed;
+  border-radius: 4px;
 }
 
 .imgTrans{
@@ -74,6 +98,7 @@ p {
 	width: 100px;
 	height: 140px;
 	opacity: 0.3;
+  border-radius: 4px;
 }
 
 #contenedor {
