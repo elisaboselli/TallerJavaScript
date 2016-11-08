@@ -164,6 +164,17 @@ p {
   border-radius: 8px;
 }
 
+.gif{
+  /*float: right;*/
+  margin-left: 150px;
+  width: 40px;
+  height:auto;
+}
+
+.center{
+  margin-left: 500px;
+}
+
 .img{
 	margin-left:13px;
 	width: 100px;

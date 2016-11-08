@@ -3,6 +3,8 @@ block content
   if (g.state==="Unstarted")
     h1.commonTitle Este juego aun no esta iniciado. 
     h1.mediumTitle Esperando Contrincante.
+    image.gif.center(type="image",src="./images/baile.gif") 
+
   else
     .container
       h6.id Actualmente conectado como #{user.name}
@@ -46,7 +48,10 @@ block content
               h3.commonText #{g.player1} : #{g.score[0]} | #{g.player2} : #{g.score[1]}
 
             if (!turn && ps==='mostrar ronda')
-              h3.commonTitle Esperando a #{rival.name}
+              h3.commonTitle Esperando a #{rival.name} 
+              image.gif(type="image",src="./images/baile.gif") 
+              br
+              br
 
             h2.smallText Cartas sin jugar
             if (user.handscards[0] != null)
@@ -146,7 +151,10 @@ block content
             else
               
               h3.commonTitle No es tu turno.
-              h3.commonText Esperando jugada de #{rival.name}.
+              h3.commonText Esperando jugada de #{rival.name}. 
+              image.gif(type="image",src="./images/baile.gif") 
+              br
+              br
 
               if (user.handscards[0] != null)
                 input.imgDis(type="image", src=c1, name="jugada", disabled="disabled")
