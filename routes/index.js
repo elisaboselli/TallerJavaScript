@@ -68,7 +68,7 @@ router.get('/games',function(req,res){
         if (err){
             console.log(err);
         }
-        res.render('games', {games : games});
+        res.render('games', {games : games, user:req.session.passport.user});
     });
 });
 

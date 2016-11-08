@@ -7,7 +7,7 @@ block content
     form(name="myform", role='form', action="/games",method="post", style='max-width: 400px;')
       .form-group 
         each val in games
-          if (val.player1 != user)
+          if (val.player1 !== user)
             button.button1(type="submit", name="gameid", value='#{val._id}') Jugar contra #{val.player1} a #{val.fin} puntos.
           br
         br
