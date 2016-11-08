@@ -1,3 +1,39 @@
+@font-face
+{
+  font-family: "KgInimitable";
+  src: url("/fonts/KGInimitableOriginal.ttf");
+}
+
+@font-face
+{
+  font-family: "VanillaGelato";
+  src: url("/fonts/VanillaGelato.otf");
+}
+
+@font-face
+{
+  font-family: "SunsetClouds";
+  src: url("/fonts/SunsetCloudsPersonalUse.ttf");
+}
+
+@font-face
+{
+  font-family: "Yetimology";
+  src: url("/fonts/Yetimology.otf");
+}
+
+@font-face
+{
+  font-family: "Market-Fresh";
+  src: url("/fonts/Market-Fresh.otf");
+}
+
+@font-face
+{
+  font-family: "Enriqueta-Regular";
+  src: url("/fonts/Enriqueta-Regular.otf");
+}
+
 body {
   background-image: url("./images/mesa.jpg");
   background-size: cover;
@@ -6,7 +42,68 @@ body {
 h1 {
   color: #ffffff;
   text-align: center;
-  font:300% sans-serif;
+  font:300%;
+}
+
+.bigTitle{
+  color: white;
+  text-align: center;
+  font: 280% KgInimitable;
+  text-shadow: 4px 4px 6px #666;
+}
+
+.commonTitle{
+  color:white;
+  font: 280% Yetimology;
+  margin-left: 10px;
+}
+
+.cursiveTitle{
+  color:white;
+  text-align: center;
+  font: 400% SunsetClouds;
+  text-shadow: 4px 4px 6px #666;
+}
+
+.mediumTitle{
+  color:white;
+  font: 200% Yetimology;
+  margin-left: 10px;
+}
+
+.smallCursive{
+  color:white;
+  text-align: center;
+  font: 250% SunsetClouds;
+  text-shadow: 4px 4px 6px #666;
+}
+
+.smallText{
+  color:white;
+  text-align: left;
+  font: 150% Market-Fresh;
+  text-decoration: underline;
+}
+
+.smallTextCentered{
+  color:white;
+  text-align: center;
+  font: 150% Market-Fresh;
+  text-decoration: underline;
+}
+
+.commonText{
+  color:white;
+  font: 150% Market-Fresh;
+}
+
+.id{
+  color:white;
+  font: 20px Yetimology;
+  position: absolute;
+  top: -40px;
+  left: 10px;
+  text-align: right;
 }
 
 h2{
@@ -44,7 +141,8 @@ p {
 	border:none;
 	padding:10px 25px;
 	text-align: center;
-	font-size: 16px;
+  /*font: 22px VanillaGelato;*/
+  font: 90% Market-Fresh;
 	margin: 13px;
   border-radius: 8px;
   box-shadow: 0px 5px #666;
@@ -61,7 +159,7 @@ p {
 	border:none;
 	padding:10px 25px;
 	text-align: center;
-	font-size: 16px;
+  font: 20px Yetimology;
 	margin: 3px;
   border-radius: 8px;
 }

@@ -49,7 +49,7 @@ router.get('/logout', function(req, res) {
 });
 /* GET newgame page*/
 router.get('/newgame',function(req,res){
-    res.render('newgame');
+    res.render('newgame',{user:req.session.passport.user});
 });
 
 /*POST newgame page*/
@@ -86,7 +86,7 @@ router.post('/games',function(req,res){
 router.get('/play', function(req,res){
     Game.findOne({_id:req.query.gameid},function(err,game){
         if (game.currentRound == undefined){
-            res.render('play', {g : game});
+            res.render('play', {g : game, user:req.session.passport.user});
         }
         else{
             var r = game.currentRound;
@@ -145,16 +145,16 @@ router.get('/play', function(req,res){
             game.play(req.body.jugada);
         }
         if (req.body.jugada == 'jugar carta 1'){
-            game.play('play card',0);   
+            game.play('play card',0);
         }
         if (req.body.jugada == 'jugar carta 2'){
-            game.play('play card',1);   
+            game.play('play card',1);
         }
         if (req.body.jugada == 'jugar carta 3'){
-            game.play('play card',2);   
+            game.play('play card',2);
         }
         game.score[0] += r.score[0];
-        game.score[1] += r.score[1];    
+        game.score[1] += r.score[1];
         if (game.win()){
             Game.update({ _id: game._id }, { $set :{score : game.score ,currentRound:r}},function (err,result){
             res.redirect ('/resultadogame?gameid=' + game._id);
@@ -162,7 +162,7 @@ router.get('/play', function(req,res){
         }
         else{
             if(r.fsm.current=='fin') {
-                Game.update({ _id: game._id }, { $set :{score : game.score ,currentRound:r}},function (err,result){    
+                Game.update({ _id: game._id }, { $set :{score : game.score ,currentRound:r}},function (err,result){
                 res.redirect('/resultadoround?gameid=' + game._id);
                 });
             }
@@ -209,7 +209,7 @@ router.post('/resultadoround', function(req,res){
         if (game.currentRound.fsm.current=='fin'){
             game.newRound();
             Game.update({ _id: game._id }, { $set :{currentRound : game.currentRound , currentHand : game.currentHand }},function (err,result){
-                if(err){    
+                if(err){
                     console.log(err);
                 }
                 res.redirect('/play?gameid=' + game._id);
