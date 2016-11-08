@@ -40,7 +40,10 @@ block content
             h3.commonText #{g.player1} : #{g.currentRound.score[0]} | #{g.player2} : #{g.currentRound.score[1]}
             
             h2.smallText Puntuación Juego
-            h3.commonText #{g.player1} : #{g.score[0] + g.currentRound.score[0]} | #{g.player2} : #{g.score[1] + g.currentRound.score[1]}
+            if (ps==='mostrar ronda')
+              h3.commonText #{g.player1} : #{g.score[0] + g.currentRound.score[0]} | #{g.player2} : #{g.score[1] + g.currentRound.score[1]}
+            else
+              h3.commonText #{g.player1} : #{g.score[0]} | #{g.player2} : #{g.score[1]}
 
             if (!turn && ps==='mostrar ronda')
               h3.commonTitle Esperando a #{rival.name}
@@ -123,11 +126,11 @@ block content
 
               br
 
-              if (g.currentRound.fsm.can('truco') && (g.currentRound.scoretruco < 2))
-                button.button1(onclick='myFunction("truco")') Truco
-                
               if g.currentRound.fsm.can('envido')
                 button.button1(onclick='myFunction("envido")') Envido
+
+              if (g.currentRound.fsm.can('truco') && (g.currentRound.scoretruco < 2))
+                button.button1(onclick='myFunction("truco")') Truco
                 
               if g.currentRound.fsm.can('quiero')
                 button.button1(onclick='myFunction("quiero")') Quiero
