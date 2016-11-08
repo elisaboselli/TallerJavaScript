@@ -229,7 +229,7 @@ Round.prototype.calculateScore = function(action){
     		}
 		}
 	}
-	if (action=='irse al mazo'){
+	if (action=='irse-al-mazo'){
 		if((this.estados.length == 1)||(this.estados[this.estados.length-1]=="envido")){
 			if (this.player1.name === this.currentTurn){
 					this.score[1] += 2;
