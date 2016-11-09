@@ -239,14 +239,14 @@ Round.prototype.calculateScore = function(action){
 			}
 		}
 		else{
-			if (this.estados[this.estados.length-1]==="truco" || ((this.estados[this.estados.length-2]==="truco")&&(this.estados[this.estados.length-1]==="quiero"))){
+			//if (this.estados[this.estados.length-1]==="truco" || ((this.estados[this.estados.length-2]==="truco")&&(this.estados[this.estados.length-1]==="quiero"))){
 				if (this.player1.name === this.currentTurn){
 					this.score[1] += this.scoretruco;
 				}
 				else{
 					this.score[0] += this.scoretruco;
 				}
-			}
+			//}
 		}
 	}
 }
