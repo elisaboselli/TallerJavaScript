@@ -1,0 +1,1 @@
+truco-arg-online-beg: node index.js
