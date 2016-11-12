@@ -66,7 +66,7 @@ block content
             br
 
             if (turn && ps==='mostrar ronda')
-              button.button1(onclick='myFunction("proxima-ronda")') Próxima Ronda
+              button.button1(onclick='myPlay("proxima-ronda")') Próxima Ronda
             
             if (ps==='fin juego')
               if (g.score[0]>g.score[1])
@@ -113,38 +113,38 @@ block content
 
               if (user.handscards[0] != null)
                 if (g.currentRound.fsm.can('play card'))
-                  input.imgMesa(type="image", src=c1, value='jugar carta 1', onclick='myFunction("jugar-carta-1")')
+                  input.imgMesa(type="image", src=c1, value='jugar carta 1', onclick='myPlay("jugar-carta-1")')
                 else
                   input.imgDis(type="image", src=c1, name="jugada", disabled="disabled")
 
               if (user.handscards[1] != null) 
                 if (g.currentRound.fsm.can('play card'))
-                  input.imgMesa(type="image", src=c2, value='jugar carta 2', onclick='myFunction("jugar-carta-2")')              
+                  input.imgMesa(type="image", src=c2, value='jugar carta 2', onclick='myPlay("jugar-carta-2")')              
                 else
                   input.imgDis(type="image", src=c2, name="jugada", disabled="disabled")
 
               if (user.handscards[2] != null) 
                 if (g.currentRound.fsm.can('play card'))
-                  input.imgMesa(type="image", src=c3, value='jugar carta 3', onclick='myFunction("jugar-carta-3")')
+                  input.imgMesa(type="image", src=c3, value='jugar carta 3', onclick='myPlay("jugar-carta-3")')
                 else
                   input.imgDis(type="image", src=c3, name="jugada", disabled="disabled")
 
               br
 
               if g.currentRound.fsm.can('envido')
-                button.button1(onclick='myFunction("envido")') Envido
+                button.button1(onclick='myPlay("envido")') Envido
 
               if (g.currentRound.fsm.can('truco') && (g.currentRound.scoretruco < 2))
-                button.button1(onclick='myFunction("truco")') Truco
+                button.button1(onclick='myPlay("truco")') Truco
                 
               if g.currentRound.fsm.can('quiero')
-                button.button1(onclick='myFunction("quiero")') Quiero
+                button.button1(onclick='myPlay("quiero")') Quiero
                 
               if g.currentRound.fsm.can('no-quiero')
-                button.button1(onclick='myFunction("no-quiero")') No Quiero
+                button.button1(onclick='myPlay("no-quiero")') No Quiero
                 
               if g.currentRound.fsm.can('irse-al-mazo')
-                button.button1(onclick='(myFunction("irse-al-mazo"))') Irse al Mazo
+                button.button1(onclick='(myPlay("irse-al-mazo"))') Irse al Mazo
 
               br
 
@@ -186,6 +186,6 @@ block content
       }
     });
 
-    function myFunction(jugada) {
+    function myPlay(jugada) {
       socket.emit('jugada', jugada,'#{g._id}');
-    }  
+    } 
