@@ -11,3 +11,11 @@ block content
             button.button1(type="submit", name="gameid", value='#{val._id}') Jugar contra #{val.player1} a #{val.fin} puntos.
           br
         br
+    button.button1(onclick='(refrescar())') Recargar
+    br
+
+  script(type='text/javascript').
+
+    function refrescar() {
+      location.reload();
+    } 
