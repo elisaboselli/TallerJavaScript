@@ -4,11 +4,12 @@ block content
   .container
     if(mensaje)
       h1 #{mensaje}
-    h1 Nuevo Juego
+    h6.id Actualmente conectado como #{user}
+    h1.cursiveTitle Nuevo Juego
     br
     form(role='form', action="/newgame",method="post", style='max-width: 300px;')
       .form-group
-          h4 ¿A cuantos puntos desea jugar?
+          h4.mediumTitle ¿A cuantos puntos desea jugar?
           input.button1(type="submit", name="cantidad", value='6')
           input.button1(type="submit", name="cantidad", value='18')
           input.button1(type="submit", name="cantidad", value='24')

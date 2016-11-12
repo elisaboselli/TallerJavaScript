@@ -229,24 +229,24 @@ Round.prototype.calculateScore = function(action){
     		}
 		}
 	}
-	if (action=='irse al mazo'){
-		if((this.estados.length == 1)||(this.estados[this.estados.length-1]=="envido")){
+	if (action=='irse-al-mazo'){
+		if((this.estados.length === 1)||(this.estados[this.estados.length-1]==="envido")){
 			if (this.player1.name === this.currentTurn){
-					this.score[1] += 2;
-				}
-				else{
-					this.score[0] += 2;
-				}
+				this.score[1] += 2;
+			}
+			else{
+				this.score[0] += 2;
+			}
 		}
 		else{
-			if (this.estados[this.estados.length-1]=="truco" || (this.estados[this.estados.length-2]=="truco")&&(this.estados[this.estados.length-1]=="quiero")){
+			//if (this.estados[this.estados.length-1]==="truco" || ((this.estados[this.estados.length-2]==="truco")&&(this.estados[this.estados.length-1]==="quiero"))){
 				if (this.player1.name === this.currentTurn){
-						this.score[1] += this.scoretruco;
-					}
-					else{
-						this.score[0] += this.scoretruco;
-					}
+					this.score[1] += this.scoretruco;
 				}
+				else{
+					this.score[0] += this.scoretruco;
+				}
+			//}
 		}
 	}
 }
