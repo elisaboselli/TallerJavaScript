@@ -1,1 +1,1 @@
-truco-arg-online-beg: npm start
+web: npm start
