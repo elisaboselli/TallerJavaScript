@@ -1,1 +1,1 @@
-truco-arg-online-beg: node index.js
+truco-arg-online-beg: npm start
