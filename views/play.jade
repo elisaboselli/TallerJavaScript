@@ -10,23 +10,23 @@ block content
       h6.id Actualmente conectado como #{user.name}
       
       div(id="contenedor")  
-          div(id="left")
-            if (ps=='mostrar ronda' || ps==='fin juego')
-              h1.smallCursive Ronda Finalizada
+        div(id="left")
+          if (ps=='mostrar ronda' || ps==='fin juego')
+            h1.smallCursive Ronda Finalizada
+          else
+            h1.smallCursive Jugar Ronda
+
+          h5.smallTextCentered Cartas jugadas de #{rival.name}
+          each val in rc
+            img.img(src=val)
+
+          h5.smallTextCentered Cartas jugadas de #{user.name}
+          each val in uc
+            if (val ==='./images/dorso.jpg')
+              img.imgTrans(src='./images/void.jpg')
             else
-              h1.smallCursive Jugar Ronda
-
-            h5.smallTextCentered Cartas jugadas de #{rival.name}
-            each val in rc
               img.img(src=val)
-
-            h5.smallTextCentered Cartas jugadas de #{user.name}
-            each val in uc
-              if (val ==='./images/dorso.jpg')
-                img.imgTrans(src='./images/void.jpg')
-              else
-                img.img(src=val)
-            br
+          br
 
         div(id="right")
           
@@ -67,22 +67,6 @@ block content
 
             if (turn && ps==='mostrar ronda')
               button.button1(onclick='myPlay("proxima-ronda")') Próxima Ronda
-            
-            if (ps==='fin juego')
-              if (g.score[0]>g.score[1])
-                if (user.name===g.player1)
-                  h3.cursiveTitle ¡Felicidades #{g.player1}!
-                  h3.cursiveTitle ¡Ganaste el juego!
-                else
-                  h3.cursiveTitle Lo siento, perdiste
-              else
-                if (user.name===g.player1)
-                  h3.cursiveTitle Lo siento, perdiste
-                else
-                  h3.cursiveTitle ¡Felicidades #{g.player2}! 
-                  h3.cursiveTitle ¡Ganaste el juego!
-              a(href='/')
-                button.button1(type="button") Inicio
             
           else
             
@@ -167,6 +151,23 @@ block content
 
               br
 
+        div(id="border")
+          if (ps==='fin juego')
+            if (g.score[0]>g.score[1])
+              if (user.name===g.player1)
+                h3.cursiveTitle ¡Felicidades #{g.player1}!
+                h3.cursiveTitle ¡Ganaste el juego!
+              else
+                h3.cursiveTitle Lo siento, perdiste
+            else
+              if (user.name===g.player1)
+                h3.cursiveTitle Lo siento, perdiste
+              else
+                h3.cursiveTitle ¡Felicidades #{g.player2}! 
+                h3.cursiveTitle ¡Ganaste el juego!
+            a(href='/')
+              button.button1(type="button") Inicio
+          
 
   script(src='https://cdn.socket.io/socket.io-1.2.0.js')
 

@@ -211,21 +211,32 @@ p {
 }
 
 #contenedor {
-  width: 1000px;
+  width: 100%;
 }
 
 #left {
   float: left;
-  width: 350px;
+  /*width: 350px;*/
+  width: 27%;
   height: 600px;
   background-image: url("./images/paño.jpg");
-  margin-left: 30px;
+  /*margin-left: 30px;*/
+  margin-left: 2%;
 }
 
 #right {
   float: left;
-  width: 500px;
-  margin-left: 50px;
+  /*width: 500px;*/
+  width: 35%;
+  /*margin-left: 50px;*/
+  margin-left: 3%;
+  margin-right: 2%;
+}
+
+#border{
+  float: left;
+  width: 30%;
+  margin-top: -40px;
 }
 
 .space{
