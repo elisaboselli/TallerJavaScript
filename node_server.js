@@ -45,7 +45,12 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser())
 
 // mongoose
-mongoose.connect('mongodb://localhost/truco-development');
+var uristring =
+    process.env.MONGOLAB_URI ||
+    process.env.MONGOHQ_URL ||
+    'mongodb://localhost/truco-development';
+mongoose.connect(uristring);
+//mongoose.connect('mongodb://localhost/truco-development');
 
 
 // catch 404 and forward to error handler
