@@ -6,12 +6,14 @@ block content
     h1.cursiveTitle Unirse a un Juego
     form(name="myform", role='form', action="/games",method="post", style='max-width: 400px;')
       .form-group 
-        each val in games
-          if (val.player1 !== user)
-            button.button1(type="submit", name="gameid", value='#{val._id}') Jugar contra #{val.player1} a #{val.fin} puntos.
-          br
+      each val in games
+        if (val.player1 !== user)
+          button.button1(type="submit", name="gameid", value='#{val._id}') Jugar contra #{val.player1} a #{val.fin} puntos.
         br
+      br
     button.button1(onclick='(refrescar())') Recargar
+    a(href='/')
+      button.button1(type="button") Volver
     br
 
   script(type='text/javascript').
